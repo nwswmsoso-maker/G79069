@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>صالون محمد عدنان - الحجز الذكي</title>
+    
+    <!-- الخطوط والأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- مكتبة Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f1116 0%, #171a21 100%);
+            --card-bg: rgba(30, 34, 45, 0.7);
+            --gold: #d4af37;
+            --gold-hover: #f3cf55;
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --border-color: rgba(214, 175, 55, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        /* الهيدر */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+        .header .logo-icon {
+            font-size: 45px;
+            color: var(--gold);
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(214,175,55,0.3);
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* الحاوية الرئيسية */
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* خانة إدخال الاسم */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 16px 45px 16px 15px;
+            background: #12141a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(214,175,55,0.1);
+        }
+
+        /* تخصيص اختيار الخدمات بشكل تفاعلي */
+        .services-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .service-option {
+            background: #12141a;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .service-option:hover {
+            border-color: rgba(214, 175, 55, 0.5);
+            background: rgba(214, 175, 55, 0.02);
+        }
+        .service-option.selected {
+            border-color: var(--gold);
+            background: rgba(214, 175, 55, 0.08);
+        }
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .service-info i {
+            font-size: 20px;
+            color: var(--gold);
+        }
+        .service-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .service-duration {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* الأزرار */
+        button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            background: var(--gold);
+            color: #0b0c10;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(214,175,55,0.2);
+        }
+        button:hover {
+            background: var(--gold-hover);
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #4a4a4a;
+            color: #8a8a8a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* شاشة الانتظار المحدثة */
+        .queue-display {
+            display: none;
+            text-align: center;
+        }
+        .status-pill {
+            background: rgba(214, 175, 55, 0.1);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .counter-box {
+            background: #12141a;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .number-big {
+            font-size: 70px;
+            font-weight: 900;
+            color: var(--gold);
+            line-height: 1;
+            margin-top: 10px;
+            text-shadow: 0 0 20px rgba(214,175,55,0.2);
+        }
+
+        /* الأنيميشن */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+
+        /* Spinner التحميل */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #000;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-icon"><i class="fas fa-scissors"></i></div>
+        <h1>صالون محمد عدنان</h1>
+        <p>الفخامة والسرعة في تجربة حجز ذكية</p>
+    </div>
+
+    <div class="container">
+        <!-- كارت الحجز الاحترافي -->
+        <div class="card" id="bookingForm">
+            <h3><i class="fas fa-calendar-check" style="color:var(--gold)"></i> احجز لحلاقتك الآن</h3>
+            
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="name" placeholder="أدخل اسمك الكريم..." autocomplete="off">
+            </div>
+
+            <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted);">اختر الخدمة المطلوبة:</h4>
+            <div class="services-grid">
+                <div class="service-option selected" data-value="1" onclick="selectService(this)">
+                    <div class="service-info">
+                        <i class="fas fa-cut"></i>
+                        <div>
+                            <span class="service-title">حلاقة شعر احترافية</span>
+                            <span class="service-duration"><i class="far fa-clock"></i> 15 دقيقة</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-option" data-value="2" onclick="selectService(this)">
+                    <div class="service-info">
+                        <i class="fas fa-mustache"></i>
+                        <div>
+                            <span class="service-title">حلاقة شعر + تصميم لحية</span>
+                            <span class="service-duration"><i class="far fa-clock"></i> 30 دقيقة</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="service-option" data-value="3" onclick="selectService(this)">
+                    <div class="service-info">
+                        <i class="fas fa-sparkles"></i>
+                        <div>
+                            <span class="service-title">جلسة تنظيف وبخار بشرة</span>
+                            <span class="service-duration"><i class="far fa-clock"></i> 25 دقيقة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="submitBtn" onclick="book()">
+                <span>تأكيد إرسال الطلب</span>
+                <div class="spinner" id="btnSpinner"></div>
+            </button>
+        </div>
+
+        <!-- واجهة قائمة الانتظار الذكية -->
+        <div class="card queue-display" id="queueDisplay">
+            <h3>مرحباً بك، <span id="displayName" style="color: var(--gold);"></span></h3>
+            
+            <div class="status-pill">
+                <div class="pulse-dot"></div>
+                <span id="statusText">جاري حساب دورك...</span>
+            </div>
+
+            <div class="counter-box">
+                <span style="color: var(--text-muted); font-size: 14px;">عدد المنتظرين أمامك حالياً</span>
+                <div class="number-big" id="queueNumber">--</div>
+            </div>
+
+            <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;"></p>
+        </div>
+    </div>
+
+    <script>
+        // تكوين Supabase - ضع بياناتك هنا
+        const supabaseUrl = 'URL'; 
+        const supabaseKey = 'KEY';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let myId = null;
+        let selectedServiceId = "1"; // القيمة الافتراضية
+
+        // تبديل اختيار الخدمات بشكل بصري جميل
+        function selectService(element) {
+            document.querySelectorAll('.service-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedServiceId = element.getAttribute('data-value');
+        }
+
+        // إرسال الحجز
+        async function book() {
+            const nameInput = document.getElementById('name');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            
+            const name = nameInput.value.trim();
+            if(!name) {
+                nameInput.style.borderColor = "#ff4d4d";
+                return;
+            }
+
+            // تفعيل وضع التحميل لمنع النقرات المتكررة
+            submitBtn.disabled = true;
+            btnSpinner.style.display = 'block';
+
+            try {
+                const { data, error } = await supabase
+                    .from('appointments')
+                    .insert([{ customer_name: name, service_id: selectedServiceId }])
+                    .select();
+
+                if (error) throw error;
+
+                if(data && data.length > 0) {
+                    myId = data[0].id;
+                    
+                    // تحويل الواجهات بنعومة
+                    document.getElementById('bookingForm').style.display = 'none';
+                    document.getElementById('queueDisplay').style.display = 'block';
+                    
+                    // تحديث فوري وتشغيل عداد المزامنة
+                    updateUI();
+                    setInterval(updateUI, 4000); // تحديث دوري كل 4 ثوانٍ بشكل ذكي
+                }
+            } catch (err) {
+                alert("عذراً، حدث خطأ أثناء الاتصال. يرجى المحاولة مجدداً.");
+                submitBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+            }
+        }
+
+        // تحديث البيانات وشاشة الانتظار
+        async function updateUI() {
+            if(!myId) return;
+
+            try {
+                // جلب حالة الحجز الخاص بالعميل
+                const { data: appointment, error } = await supabase
+                    .from('appointments')
+                    .select('*')
+                    .eq('id', myId)
+                    .single();
+
+                if (error) return;
+
+                document.getElementById('displayName').innerText = appointment.customer_name;
+                
+                if(appointment.status === 'approved') {
+                    document.getElementById('statusText').innerText = "حان دورك الآن!";
+                    document.getElementById('statusText').parentElement.style.background = "rgba(46, 213, 115, 0.1)";
+                    document.getElementById('statusText').parentElement.style.color = "#2ed573";
+                    document.getElementById('queueNumber').innerText = "✂️";
+                    document.getElementById('queueNumber').style.color = "#2ed573";
+                    document.getElementById('msg').innerHTML = "تفضل بالدخول إلى كرسي الحلاقة الآن. <br> نعيماً مقدماً! 💈";
+                } else {
+                    // حساب عدد الأشخاص الذين لديهم رقم تعريفي (ID) أصغر وحالتهم معلقة (Pending)
+                    const { count, error: countError } = await supabase
+                        .from('appointments')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('status', 'pending')
+                        .lt('id', myId);
+
+                    if (countError) return;
+
+                    document.getElementById('queueNumber').innerText = count;
+                    document.getElementById('statusText').innerText = "أنت في قائمة الانتظار الحية";
+                    document.getElementById('msg').innerText = "يرجى التواجد في الصالون أو قريباً منه، سنقوم بتحديث الشاشة فوراً عند اقتراب دورك.";
+                }
+            } catch (e) {
+                console.log("خطأ في تحديث البيانات الإحصائية.");
+            }
+        }
+    </script>
+</body>
+</html>
