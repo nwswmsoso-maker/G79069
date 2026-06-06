@@ -19,7 +19,7 @@
             color: #fff; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; padding: 30px 20px;
         }
-        .header { text-align: center; margin-bottom: 40px; }
+        .header { text-align: center; margin-bottom: 25px; }
         .header .logo-icon { font-size: 45px; color: var(--gold); margin-bottom: 10px; }
         .header h1 { font-size: 28px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
@@ -45,6 +45,24 @@
         }
         .main-btn:hover { background: var(--gold-hover); transform: translateY(-2px); }
         .main-btn:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
+
+        /* ✅ شريط حالة الصالون */
+        .status-bar {
+            margin-bottom: 18px; padding: 13px 20px; border-radius: 14px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 15px; font-weight: 700; transition: all 0.4s;
+        }
+        .status-bar.open   { background: rgba(46,213,115,0.12); color: #2ed573; border: 1px solid rgba(46,213,115,0.25); }
+        .status-bar.closed { background: rgba(220,53,69,0.12);  color: #ff6b7a; border: 1px solid rgba(220,53,69,0.25); }
+        .s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .status-bar.open   .s-dot { background: #2ed573; animation: pulse 1.5s infinite; }
+        .status-bar.closed .s-dot { background: #ff6b7a; }
+
+        /* شاشة المغلق */
+        #closedScreen { display: none; text-align: center; padding: 10px 0; }
+        .closed-emoji { font-size: 80px; display: block; margin-bottom: 15px; animation: bounceIn 0.6s ease; }
+        .closed-title { font-size: 24px; font-weight: 900; color: #ff6b7a; margin-bottom: 10px; }
+        .closed-sub { font-size: 14px; color: var(--text-muted); line-height: 2; }
 
         #queueDisplay { display: none; text-align: center; }
         .status-pill {
@@ -108,7 +126,22 @@
     </div>
 
     <div class="container">
-        <div class="card animated" id="bookingForm">
+
+        <!-- ✅ شريط حالة الصالون - يظهر دائماً -->
+        <div class="status-bar" id="salonStatusBar" style="display:none;">
+            <div class="s-dot"></div>
+            <span id="salonStatusText"></span>
+        </div>
+
+        <!-- ✅ شاشة المغلق -->
+        <div class="card animated" id="closedScreen">
+            <span class="closed-emoji">🔒</span>
+            <div class="closed-title">الصالون مغلق حالياً</div>
+            <div class="closed-sub">نأسف، الصالون غير متاح الآن<br>يرجى المحاولة لاحقاً ✂️</div>
+        </div>
+
+        <!-- فورم الحجز -->
+        <div class="card animated" id="bookingForm" style="display:none;">
             <h3>احجز للحلاقة الآن</h3>
             <div class="input-group">
                 <i class="fas fa-user"></i>
@@ -119,6 +152,7 @@
             </button>
         </div>
 
+        <!-- شاشة الانتظار -->
         <div class="card animated" id="queueDisplay">
             <h3>مرحباً، <span id="displayName" style="color: var(--gold);"></span></h3>
             <div class="status-pill">
@@ -135,6 +169,7 @@
             </button>
         </div>
 
+        <!-- شاشة النهاية -->
         <div class="card animated" id="finishScreen">
             <span class="finish-emoji">💈</span>
             <div class="finish-title">نعيماً يا عيوني! 🎉</div>
@@ -163,35 +198,78 @@
         let myName = null;
         let updateInterval = null;
         let alreadyNotified = false;
+        let salonIsOpen = null; // ✅ حالة الصالون
 
-        // ✅ عند تحميل الصفحة - نتحقق إذا عنده حجز محفوظ
+        // ✅ تحديث شريط الحالة
+        function renderSalonStatus(isOpen) {
+            salonIsOpen = isOpen;
+            const bar  = document.getElementById('salonStatusBar');
+            const text = document.getElementById('salonStatusText');
+            bar.style.display = 'flex';
+            if (isOpen) {
+                bar.className = 'status-bar open';
+                text.innerText = '🟢 الصالون مفتوح الآن';
+            } else {
+                bar.className = 'status-bar closed';
+                text.innerText = '🔴 الصالون مغلق حالياً';
+            }
+        }
+
+        // ✅ جلب حالة الصالون وعرض الشاشة المناسبة
+        async function fetchSalonStatus() {
+            const { data, error } = await db.from('salon_status').select('is_open').eq('id', 1).single();
+            if (error || !data) return;
+
+            const isOpen = data.is_open;
+            renderSalonStatus(isOpen);
+
+            // إذا عنده حجز نشط، ما نغير شاشته
+            if (myId) return;
+
+            // إذا خلص - ما نغير شاشة النهاية
+            if (document.getElementById('finishScreen').style.display === 'block') return;
+
+            if (isOpen) {
+                document.getElementById('closedScreen').style.display = 'none';
+                document.getElementById('bookingForm').style.display = 'block';
+            } else {
+                document.getElementById('closedScreen').style.display = 'block';
+                document.getElementById('bookingForm').style.display = 'none';
+            }
+        }
+
+        // ✅ عند تحميل الصفحة - تحقق من localStorage
         window.addEventListener('load', async () => {
-            const savedId   = localStorage.getItem('salon_myId');
-            const savedName = localStorage.getItem('salon_myName');
+            // أول شي جلب حالة الصالون
+            await fetchSalonStatus();
+
+            const savedId      = localStorage.getItem('salon_myId');
+            const savedName    = localStorage.getItem('salon_myName');
             const savedNotified = localStorage.getItem('salon_notified') === 'true';
 
             if (savedId && savedName) {
-                // ✅ تحقق أن الحجز لا يزال موجود وما اكتمل
                 const { data, error } = await db
                     .from('appointments').select('*').eq('id', savedId).single();
 
                 if (!error && data && data.status !== 'completed') {
-                    // الحجز لا يزال حي - أعد عرض شاشة الانتظار
-                    myId = parseInt(savedId);
+                    myId   = parseInt(savedId);
                     myName = savedName;
                     alreadyNotified = savedNotified;
 
                     document.getElementById('bookingForm').style.display = 'none';
+                    document.getElementById('closedScreen').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = myName;
 
                     updateUI();
                     updateInterval = setInterval(updateUI, 4000);
                 } else {
-                    // الحجز انتهى أو مو موجود - نظف localStorage
                     clearStorage();
                 }
             }
+
+            // تحديث حالة الصالون كل 5 ثواني
+            setInterval(fetchSalonStatus, 5000);
         });
 
         function saveToStorage() {
@@ -249,11 +327,10 @@
                 if (data && data.length > 0) {
                     myId   = data[0].id;
                     myName = name;
-
-                    // ✅ احفظ في localStorage فوراً
                     saveToStorage();
 
                     document.getElementById('bookingForm').style.display = 'none';
+                    document.getElementById('closedScreen').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = name;
 
@@ -277,13 +354,11 @@
 
                 if (appt.status === 'approved') {
                     clearInterval(updateInterval);
-
                     if (!alreadyNotified) {
                         alreadyNotified = true;
                         localStorage.setItem('salon_notified', 'true');
                         playTurnSound();
                     }
-
                     const pill = document.querySelector('.status-pill');
                     pill.style.background = 'rgba(46,213,115,0.1)';
                     pill.style.color = '#2ed573';
@@ -295,7 +370,6 @@
                     document.getElementById('doneBtn').style.display = 'flex';
 
                 } else if (appt.status === 'pending') {
-                    // ✅ نحسب كل الناس قبله (pending + approved) لأنهم لسه ما خلصوا
                     const { count } = await db
                         .from('appointments')
                         .select('*', { count: 'exact', head: true })
@@ -317,7 +391,6 @@
             closeConfirm();
             try {
                 await db.from('appointments').update({ status: 'completed' }).eq('id', myId);
-                // ✅ امسح localStorage بعد الانتهاء
                 clearStorage();
                 myId = null;
                 document.getElementById('queueDisplay').style.display = 'none';
