@@ -118,16 +118,12 @@
     </div>
 
     <script>
-        // إعدادات الربط الصحيحة مع قاعدة بياناتك
+        // ✅ الإصلاح: استخدام createClient من المكتبة مباشرة بدون تعارض في الأسماء
         const supabaseUrl = 'https://hoskjuzxrmzuarobofp.supabase.co'; 
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvc2tqdXpreHJtenVhcm9ib2ZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTI0OTQsImV4cCI6MjA5NjMyODQ5NH0.djwG-Oybxf3rKyxvLlrClAMkdjyMw-_vTMyGJmOO-30';
 
-        let supabase;
-        try {
-            supabase = supabase.createClient(supabaseUrl, supabaseKey);
-        } catch (error) {
-            console.error("خطأ في تهيئة Supabase:", error);
-        }
+        // ✅ الإصلاح: استخدام supabase.createClient (من المكتبة المحملة عبر CDN)
+        const db = supabase.createClient(supabaseUrl, supabaseKey);
 
         let myId = null;
 
@@ -136,37 +132,31 @@
             const submitBtn = document.getElementById('submitBtn');
             const name = nameInput.value.trim();
 
-            if(!name) {
+            if (!name) {
                 alert("يرجى كتابة اسمك أولاً!");
                 nameInput.style.borderColor = "#ff4d4d";
                 return;
             }
 
-            // تحويل الزر إلى حالة التحميل لمنع الحجز المزدوج
             submitBtn.innerText = "جاري الحجز...";
             submitBtn.disabled = true;
 
             try {
-                // إرسال الاسم إلى جدول appointments
-                const { data, error } = await supabase
+                // ✅ الإصلاح: استخدام db بدلاً من supabase
+                const { data, error } = await db
                     .from('appointments')
                     .insert([{ customer_name: name }])
                     .select();
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
                 if (data && data.length > 0) {
                     myId = data[0].id;
-                    
-                    // إخفاء الحجز وإظهار شاشة الانتظار
+
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
-                    
-                    // تحديث الواجهة فوراً
+
                     updateUI();
-                    // تكرار التحديث كل 4 ثواني لمعرفة الدور
                     setInterval(updateUI, 4000);
                 } else {
                     alert("عذراً، لم يتم إرجاع أي بيانات. تأكد من إعدادات الجدول.");
@@ -181,11 +171,11 @@
         }
 
         async function updateUI() {
-            if(!myId) return;
+            if (!myId) return;
 
             try {
-                // جلب بيانات العميل الحالي
-                const { data: appointment, error } = await supabase
+                // ✅ الإصلاح: استخدام db بدلاً من supabase
+                const { data: appointment, error } = await db
                     .from('appointments')
                     .select('*')
                     .eq('id', myId)
@@ -194,9 +184,8 @@
                 if (error) return;
 
                 document.getElementById('displayName').innerText = appointment.customer_name;
-                
-                // إذا تم تحويل حالة العميل إلى approved من قبل الإدارة
-                if(appointment.status === 'approved') {
+
+                if (appointment.status === 'approved') {
                     document.getElementById('statusText').innerText = "حان دورك الآن!";
                     document.getElementById('statusText').parentElement.style.background = "rgba(46, 213, 115, 0.1)";
                     document.getElementById('statusText').parentElement.style.color = "#2ed573";
@@ -204,8 +193,8 @@
                     document.getElementById('queueNumber').style.color = "#2ed573";
                     document.getElementById('msg').innerHTML = "تفضل بالدخول إلى كرسي الحلاقة الآن. <br> نعيماً مقدماً! 💈";
                 } else {
-                    // حساب عدد الأشخاص المنتظرين (الذين لديهم ID أصغر وحالتهم pending)
-                    const { count, error: countError } = await supabase
+                    // ✅ الإصلاح: استخدام db بدلاً من supabase
+                    const { count, error: countError } = await db
                         .from('appointments')
                         .select('*', { count: 'exact', head: true })
                         .eq('status', 'pending')
@@ -218,7 +207,7 @@
                     document.getElementById('msg').innerText = "سنقوم بتحديث الشاشة فوراً عند اقتراب دورك.";
                 }
             } catch (e) {
-                console.log("خطأ في تحديث البيانات.");
+                console.log("خطأ في تحديث البيانات:", e);
             }
         }
     </script>
