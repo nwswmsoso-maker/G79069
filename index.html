@@ -39,14 +39,14 @@
             color: white; font-size: 16px; outline: none; text-align: center; font-family: 'Cairo', sans-serif;
         }
         .input-group input:focus { border-color: var(--gold); }
-        button {
+        .main-btn {
             width: 100%; padding: 16px; border-radius: 14px; border: none;
             background: var(--gold); color: #0b0c10; font-size: 18px; font-weight: 800;
             cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
             font-family: 'Cairo', sans-serif; transition: all 0.3s ease;
         }
-        button:hover { background: var(--gold-hover); transform: translateY(-2px); }
-        button:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
+        .main-btn:hover { background: var(--gold-hover); transform: translateY(-2px); }
+        .main-btn:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
 
         #queueDisplay { display: none; text-align: center; }
         .status-pill {
@@ -61,25 +61,22 @@
         }
         .number-big { font-size: 70px; font-weight: 900; color: var(--gold); line-height: 1; margin-top: 10px; }
 
-        /* زر انتهيت */
         .done-btn {
             margin-top: 22px; width: 100%; padding: 20px; border-radius: 16px; border: none;
             background: linear-gradient(135deg, #2ed573, #1db954);
             color: #fff; font-size: 22px; font-weight: 900;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 12px;
+            cursor: pointer; display: none; justify-content: center; align-items: center; gap: 12px;
             font-family: 'Cairo', sans-serif; transition: all 0.3s ease;
             box-shadow: 0 8px 30px rgba(46,213,115,0.45);
             animation: bounceIn 0.6s ease;
         }
         .done-btn:active { transform: scale(0.97); }
 
-        /* شاشة النهاية */
         #finishScreen { display: none; text-align: center; padding: 15px 0; }
         .finish-emoji { font-size: 90px; margin-bottom: 15px; animation: bounceIn 0.8s ease; display: block; }
         .finish-title { font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 12px; }
         .finish-sub { font-size: 15px; color: var(--text-muted); line-height: 2; }
 
-        /* popup تأكيد */
         .overlay {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.85); z-index: 999;
@@ -89,8 +86,7 @@
         .popup {
             background: #1e2230; border-radius: 28px 28px 20px 20px; padding: 30px;
             width: 100%; max-width: 440px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.08);
-            animation: slideUp 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.08); animation: slideUp 0.4s ease;
         }
         .popup .q-emoji { font-size: 70px; display: block; margin-bottom: 15px; }
         .popup h3 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
@@ -115,7 +111,6 @@
     </div>
 
     <div class="container">
-
         <!-- فورم الحجز -->
         <div class="card animated" id="bookingForm">
             <h3>احجز للحلاقة الآن</h3>
@@ -123,7 +118,7 @@
                 <i class="fas fa-user"></i>
                 <input type="text" id="name" placeholder="أدخل اسمك الكريم" autocomplete="off">
             </div>
-            <button id="submitBtn" onclick="book()">
+            <button class="main-btn" id="submitBtn" onclick="book()">
                 <i class="fas fa-check"></i> تأكيد الحجز
             </button>
         </div>
@@ -140,38 +135,28 @@
                 <div class="number-big" id="queueNumber">--</div>
             </div>
             <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.8;"></p>
-
-            <!-- زر انتهيت يظهر فقط بعد ما يصير approved -->
-            <button class="done-btn" id="doneBtn" style="display:none;" onclick="showConfirm()">
+            <button class="done-btn" id="doneBtn" onclick="showConfirm()">
                 <span style="font-size:26px;">✅</span> انتهيت من الحلاقة
             </button>
         </div>
 
-        <!-- شاشة نهاية -->
+        <!-- شاشة النهاية -->
         <div class="card animated" id="finishScreen">
             <span class="finish-emoji">💈</span>
             <div class="finish-title">نعيماً يا عيوني! 🎉</div>
-            <div class="finish-sub">
-                شكراً لزيارتك صالون محمد عدنان<br>
-                نتشرف بخدمتك دائماً ✂️
-            </div>
+            <div class="finish-sub">شكراً لزيارتك صالون محمد عدنان<br>نتشرف بخدمتك دائماً ✂️</div>
         </div>
-
     </div>
 
-    <!-- Popup تأكيد الانتهاء -->
+    <!-- Popup تأكيد -->
     <div class="overlay" id="confirmOverlay">
         <div class="popup">
             <span class="q-emoji">✂️</span>
             <h3>انتهيت من الحلاقة؟</h3>
             <p>اضغط نعم إذا خلصت<br>وراح نحذف دورك من القائمة</p>
             <div class="popup-btns">
-                <button class="btn-yes" onclick="confirmDone()">
-                    ✅ نعم، خلصت
-                </button>
-                <button class="btn-no" onclick="closeConfirm()">
-                    ❌ لا، بعد
-                </button>
+                <button class="btn-yes" onclick="confirmDone()">✅ نعم، خلصت</button>
+                <button class="btn-no" onclick="closeConfirm()">❌ لا، بعد</button>
             </div>
         </div>
     </div>
@@ -183,6 +168,30 @@
 
         let myId = null;
         let updateInterval = null;
+        let alreadyNotified = false; // ✅ منع تكرار الصوت
+
+        // ✅ صوت تنبيه للزبون - نغمة جرس احترافية
+        function playTurnSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                // نغمة جرس - ثلاث نبضات صاعدة
+                const notes = [523, 659, 784]; // Do - Mi - Sol
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    const start = ctx.currentTime + i * 0.3;
+                    gain.gain.setValueAtTime(0, start);
+                    gain.gain.linearRampToValueAtTime(0.5, start + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.6);
+                    osc.start(start);
+                    osc.stop(start + 0.6);
+                });
+            } catch(e) {}
+        }
 
         async function book() {
             const nameInput = document.getElementById('name');
@@ -208,9 +217,12 @@
 
                 if (data && data.length > 0) {
                     myId = data[0].id;
+
+                    // ✅ إخفاء الفورم وإظهار شاشة الانتظار - بدون reload
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = name;
+
                     updateUI();
                     updateInterval = setInterval(updateUI, 4000);
                 }
@@ -232,7 +244,12 @@
                 if (appt.status === 'approved') {
                     clearInterval(updateInterval);
 
-                    // تغيير الألوان للأخضر
+                    // ✅ صوت مرة وحدة بس
+                    if (!alreadyNotified) {
+                        alreadyNotified = true;
+                        playTurnSound();
+                    }
+
                     const pill = document.querySelector('.status-pill');
                     pill.style.background = 'rgba(46,213,115,0.1)';
                     pill.style.color = '#2ed573';
@@ -241,8 +258,6 @@
                     document.getElementById('queueNumber').innerText = '✂️';
                     document.getElementById('queueNumber').style.color = '#2ed573';
                     document.getElementById('msg').innerHTML = 'تفضل للكرسي الآن 💈<br>نعيماً مقدماً!';
-
-                    // إظهار زر انتهيت
                     document.getElementById('doneBtn').style.display = 'flex';
 
                 } else if (appt.status === 'pending') {
@@ -257,24 +272,16 @@
                         ? 'أنت التالي مباشرة! استعد 💈'
                         : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
                 }
-            } catch (e) {
-                console.log('خطأ:', e);
-            }
+            } catch (e) {}
         }
 
-        function showConfirm() {
-            document.getElementById('confirmOverlay').classList.add('show');
-        }
-
-        function closeConfirm() {
-            document.getElementById('confirmOverlay').classList.remove('show');
-        }
+        function showConfirm() { document.getElementById('confirmOverlay').classList.add('show'); }
+        function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('show'); }
 
         async function confirmDone() {
             closeConfirm();
             try {
                 await db.from('appointments').update({ status: 'completed' }).eq('id', myId);
-                // إخفاء شاشة الانتظار وإظهار شاشة النهاية
                 document.getElementById('queueDisplay').style.display = 'none';
                 document.getElementById('finishScreen').style.display = 'block';
                 myId = null;
