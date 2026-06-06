@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- ✅ إعدادات أيقونة المتصفح (علامة التبويب) -->
+    <link rel="icon" href="cover.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="cover.jpg">
+
+    <!-- ✅ إعدادات مشاركة الرابط (للواتساب، فيسبوك، تيليجرام، جوجل) -->
+    <meta property="og:title" content="صالون محمد عدنان - الحجز">
+    <meta property="og:description" content="احجز دورك للحلاقة الآن بكل سهولة وبدون انتظار طويل في صالون محمد عدنان.">
+    <meta property="og:image" content="cover.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="cover.jpg">
+
     <title>صالون محمد عدنان - الحجز</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -24,7 +38,7 @@
         .header h1 { font-size: 28px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
         
-        /* ✅ تصميم صورة الغلاف */
+        /* تصميم صورة الغلاف داخل الموقع */
         .cover-image {
             width: 100%;
             height: 180px;
@@ -65,7 +79,6 @@
         .main-btn:hover { background: var(--gold-hover); transform: translateY(-2px); }
         .main-btn:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
 
-        /* ✅ شريط حالة الصالون */
         .status-bar {
             margin-bottom: 18px; padding: 13px 20px; border-radius: 14px;
             display: flex; align-items: center; gap: 10px;
@@ -77,7 +90,6 @@
         .status-bar.open   .s-dot { background: #2ed573; animation: pulse 1.5s infinite; }
         .status-bar.closed .s-dot { background: #ff6b7a; }
 
-        /* شاشة المغلق */
         #closedScreen { display: none; text-align: center; padding: 10px 0; }
         .closed-emoji { font-size: 80px; display: block; margin-bottom: 15px; animation: bounceIn 0.6s ease; }
         .closed-title { font-size: 24px; font-weight: 900; color: #ff6b7a; margin-bottom: 10px; }
@@ -146,18 +158,18 @@
 
     <div class="container">
     
-        <!-- ✅ صورة الغلاف (ارفع صورتك باسم cover.jpg) -->
+        <!-- ✅ صورة الغلاف داخل الصفحة -->
         <div class="cover-image animated">
             <img src="cover.jpg" alt="غلاف الصالون">
         </div>
 
-        <!-- ✅ شريط حالة الصالون - يظهر دائماً -->
+        <!-- شريط حالة الصالون -->
         <div class="status-bar" id="salonStatusBar" style="display:none;">
             <div class="s-dot"></div>
             <span id="salonStatusText"></span>
         </div>
 
-        <!-- ✅ شاشة المغلق -->
+        <!-- شاشة المغلق -->
         <div class="card animated" id="closedScreen">
             <span class="closed-emoji">🔒</span>
             <div class="closed-title">الصالون مغلق حالياً</div>
