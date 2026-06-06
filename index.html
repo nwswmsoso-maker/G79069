@@ -18,33 +18,25 @@
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
         body {
             background: linear-gradient(135deg, #0f1116 0%, #171a21 100%);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
+            color: #fff; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; padding: 30px 20px;
         }
         .header { text-align: center; margin-bottom: 40px; }
         .header .logo-icon { font-size: 45px; color: var(--gold); margin-bottom: 10px; }
         .header h1 { font-size: 28px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
         .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: var(--card-bg); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 24px;
+            border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         h3 { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
         .input-group { position: relative; margin-bottom: 25px; }
         .input-group i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
         .input-group input {
-            width: 100%; padding: 16px 45px 16px 15px;
-            background: #12141a; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; color: white; font-size: 16px; outline: none; text-align: center;
-            font-family: 'Cairo', sans-serif;
+            width: 100%; padding: 16px 45px 16px 15px; background: #12141a;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
+            color: white; font-size: 16px; outline: none; text-align: center; font-family: 'Cairo', sans-serif;
         }
         .input-group input:focus { border-color: var(--gold); }
         button {
@@ -56,12 +48,10 @@
         button:hover { background: var(--gold-hover); transform: translateY(-2px); }
         button:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
 
-        /* شاشة الانتظار */
         #queueDisplay { display: none; text-align: center; }
         .status-pill {
-            background: rgba(214,175,55,0.1); color: var(--gold);
-            padding: 8px 20px; border-radius: 50px;
-            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(214,175,55,0.1); color: var(--gold); padding: 8px 20px;
+            border-radius: 50px; display: inline-flex; align-items: center; gap: 8px;
             font-size: 14px; font-weight: 600; margin-bottom: 25px;
         }
         .pulse-dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 1.5s infinite; }
@@ -70,18 +60,62 @@
             margin: 20px 0; border: 1px solid rgba(255,255,255,0.03);
         }
         .number-big { font-size: 70px; font-weight: 900; color: var(--gold); line-height: 1; margin-top: 10px; }
+
+        /* زر انتهيت */
+        .done-btn {
+            margin-top: 22px; width: 100%; padding: 20px; border-radius: 16px; border: none;
+            background: linear-gradient(135deg, #2ed573, #1db954);
+            color: #fff; font-size: 22px; font-weight: 900;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 12px;
+            font-family: 'Cairo', sans-serif; transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(46,213,115,0.45);
+            animation: bounceIn 0.6s ease;
+        }
+        .done-btn:active { transform: scale(0.97); }
+
+        /* شاشة النهاية */
+        #finishScreen { display: none; text-align: center; padding: 15px 0; }
+        .finish-emoji { font-size: 90px; margin-bottom: 15px; animation: bounceIn 0.8s ease; display: block; }
+        .finish-title { font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 12px; }
+        .finish-sub { font-size: 15px; color: var(--text-muted); line-height: 2; }
+
+        /* popup تأكيد */
+        .overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85); z-index: 999;
+            justify-content: center; align-items: flex-end; padding: 20px;
+        }
+        .overlay.show { display: flex; }
+        .popup {
+            background: #1e2230; border-radius: 28px 28px 20px 20px; padding: 30px;
+            width: 100%; max-width: 440px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: slideUp 0.4s ease;
+        }
+        .popup .q-emoji { font-size: 70px; display: block; margin-bottom: 15px; }
+        .popup h3 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .popup p { font-size: 14px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.7; }
+        .popup-btns { display: flex; gap: 12px; }
+        .popup-btns button { flex: 1; padding: 16px; border-radius: 14px; border: none; font-size: 18px; font-weight: 800; cursor: pointer; font-family: 'Cairo', sans-serif; }
+        .btn-yes { background: linear-gradient(135deg, #2ed573, #1db954); color: #fff; box-shadow: 0 5px 20px rgba(46,213,115,0.4); }
+        .btn-no { background: rgba(255,255,255,0.07); color: #fff; }
+
         @keyframes pulse { 0%,100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .animated { animation: fadeIn 0.6s ease; }
     </style>
 </head>
 <body>
+
     <div class="header">
         <div class="logo-icon"><i class="fas fa-scissors"></i></div>
         <h1>صالون محمد عدنان</h1>
     </div>
 
     <div class="container">
+
         <!-- فورم الحجز -->
         <div class="card animated" id="bookingForm">
             <h3>احجز للحلاقة الآن</h3>
@@ -94,7 +128,7 @@
             </button>
         </div>
 
-        <!-- شاشة الانتظار - تظهر بعد الحجز بدون ما تطير الصفحة -->
+        <!-- شاشة الانتظار -->
         <div class="card animated" id="queueDisplay">
             <h3>مرحباً، <span id="displayName" style="color: var(--gold);"></span></h3>
             <div class="status-pill">
@@ -106,11 +140,43 @@
                 <div class="number-big" id="queueNumber">--</div>
             </div>
             <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.8;"></p>
+
+            <!-- زر انتهيت يظهر فقط بعد ما يصير approved -->
+            <button class="done-btn" id="doneBtn" style="display:none;" onclick="showConfirm()">
+                <span style="font-size:26px;">✅</span> انتهيت من الحلاقة
+            </button>
+        </div>
+
+        <!-- شاشة نهاية -->
+        <div class="card animated" id="finishScreen">
+            <span class="finish-emoji">💈</span>
+            <div class="finish-title">نعيماً يا عيوني! 🎉</div>
+            <div class="finish-sub">
+                شكراً لزيارتك صالون محمد عدنان<br>
+                نتشرف بخدمتك دائماً ✂️
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Popup تأكيد الانتهاء -->
+    <div class="overlay" id="confirmOverlay">
+        <div class="popup">
+            <span class="q-emoji">✂️</span>
+            <h3>انتهيت من الحلاقة؟</h3>
+            <p>اضغط نعم إذا خلصت<br>وراح نحذف دورك من القائمة</p>
+            <div class="popup-btns">
+                <button class="btn-yes" onclick="confirmDone()">
+                    ✅ نعم، خلصت
+                </button>
+                <button class="btn-no" onclick="closeConfirm()">
+                    ❌ لا، بعد
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ✅ الإعداد الصحيح
         const SUPABASE_URL = 'https://hoskjuzkxrmzuarobofp.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvc2tqdXpreHJtenVhcm9ib2ZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTI0OTQsImV4cCI6MjA5NjMyODQ5NH0.djwG-Oybxf3rKyxvLlrClAMkdjyMw-_vTMyGJmOO-30';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -142,12 +208,9 @@
 
                 if (data && data.length > 0) {
                     myId = data[0].id;
-
-                    // ✅ إخفاء الفورم وإظهار شاشة الانتظار بدون ما تطير الصفحة
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = name;
-
                     updateUI();
                     updateInterval = setInterval(updateUI, 4000);
                 }
@@ -160,19 +223,16 @@
 
         async function updateUI() {
             if (!myId) return;
-
             try {
                 const { data: appt, error } = await db
-                    .from('appointments')
-                    .select('*')
-                    .eq('id', myId)
-                    .single();
+                    .from('appointments').select('*').eq('id', myId).single();
 
                 if (error) return;
 
                 if (appt.status === 'approved') {
-                    // حان دوره
                     clearInterval(updateInterval);
+
+                    // تغيير الألوان للأخضر
                     const pill = document.querySelector('.status-pill');
                     pill.style.background = 'rgba(46,213,115,0.1)';
                     pill.style.color = '#2ed573';
@@ -180,9 +240,12 @@
                     document.getElementById('statusText').innerText = '✂️ حان دورك الآن!';
                     document.getElementById('queueNumber').innerText = '✂️';
                     document.getElementById('queueNumber').style.color = '#2ed573';
-                    document.getElementById('msg').innerHTML = 'تفضل بالدخول إلى كرسي الحلاقة الآن 💈<br>نعيماً مقدماً!';
+                    document.getElementById('msg').innerHTML = 'تفضل للكرسي الآن 💈<br>نعيماً مقدماً!';
+
+                    // إظهار زر انتهيت
+                    document.getElementById('doneBtn').style.display = 'flex';
+
                 } else if (appt.status === 'pending') {
-                    // احسب كم شخص قبله
                     const { count } = await db
                         .from('appointments')
                         .select('*', { count: 'exact', head: true })
@@ -195,7 +258,28 @@
                         : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
                 }
             } catch (e) {
-                console.log('خطأ في التحديث:', e);
+                console.log('خطأ:', e);
+            }
+        }
+
+        function showConfirm() {
+            document.getElementById('confirmOverlay').classList.add('show');
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmOverlay').classList.remove('show');
+        }
+
+        async function confirmDone() {
+            closeConfirm();
+            try {
+                await db.from('appointments').update({ status: 'completed' }).eq('id', myId);
+                // إخفاء شاشة الانتظار وإظهار شاشة النهاية
+                document.getElementById('queueDisplay').style.display = 'none';
+                document.getElementById('finishScreen').style.display = 'block';
+                myId = null;
+            } catch (e) {
+                alert('حدث خطأ: ' + e.message);
             }
         }
     </script>
