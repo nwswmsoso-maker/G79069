@@ -295,10 +295,11 @@
                     document.getElementById('doneBtn').style.display = 'flex';
 
                 } else if (appt.status === 'pending') {
+                    // ✅ نحسب كل الناس قبله (pending + approved) لأنهم لسه ما خلصوا
                     const { count } = await db
                         .from('appointments')
                         .select('*', { count: 'exact', head: true })
-                        .eq('status', 'pending')
+                        .in('status', ['pending', 'approved'])
                         .lt('id', myId);
 
                     document.getElementById('queueNumber').innerText = count ?? 0;
