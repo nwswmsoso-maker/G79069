@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- ✅ إعدادات أيقونة المتصفح (علامة التبويب) -->
     <link rel="icon" href="cover.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="cover.jpg">
 
-    <!-- ✅ إعدادات مشاركة الرابط (للواتساب، فيسبوك، تيليجرام، جوجل) -->
     <meta property="og:title" content="صالون محمد عدنان - الحجز">
     <meta property="og:description" content="احجز دورك للحلاقة الآن بكل سهولة وبدون انتظار طويل في صالون محمد عدنان.">
     <meta property="og:image" content="cover.jpg">
@@ -31,56 +29,72 @@
         body {
             background: linear-gradient(135deg, #0f1116 0%, #171a21 100%);
             color: #fff; min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; padding: 30px 20px;
+            display: flex; flex-direction: column; align-items: center; padding: 30px 20px 50px;
         }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header .logo-icon { font-size: 45px; color: var(--gold); margin-bottom: 10px; }
-        .header h1 { font-size: 28px; font-weight: 900; }
+        .header { text-align: center; margin-bottom: 16px; }
+        .header .logo-icon { font-size: 40px; color: var(--gold); margin-bottom: 8px; }
+        .header h1 { font-size: 26px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
-        
-        /* تصميم صورة الغلاف داخل الموقع */
+
+        /* ── صورة الغلاف مصغرة ومرتبة ── */
         .cover-image {
             width: 100%;
-            height: 180px;
-            margin-bottom: 25px;
-            border-radius: 24px;
+            height: 130px;
+            margin-bottom: 14px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
             border: 1px solid var(--border-color);
-            position: relative;
         }
         .cover-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
         }
-        
-        .card {
-            background: var(--card-bg); backdrop-filter: blur(10px); padding: 30px;
-            border-radius: 24px; border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        h3 { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
-        .input-group { position: relative; margin-bottom: 25px; }
-        .input-group i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .input-group input {
-            width: 100%; padding: 16px 45px 16px 15px; background: #12141a;
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
-            color: white; font-size: 16px; outline: none; text-align: center; font-family: 'Cairo', sans-serif;
-        }
-        .input-group input:focus { border-color: var(--gold); }
-        .main-btn {
-            width: 100%; padding: 16px; border-radius: 14px; border: none;
-            background: var(--gold); color: #0b0c10; font-size: 18px; font-weight: 800;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
-            font-family: 'Cairo', sans-serif; transition: all 0.3s ease;
-        }
-        .main-btn:hover { background: var(--gold-hover); transform: translateY(-2px); }
-        .main-btn:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
 
+        /* ── بطاقة معلومات الصالون ── */
+        .salon-info {
+            background: rgba(20,22,30,0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #cbd5e0;
+        }
+        .info-row i { color: var(--gold); font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+        .phone-link {
+            color: #cbd5e0;
+            text-decoration: none;
+            direction: ltr;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.2);
+            padding: 5px 14px;
+            border-radius: 30px;
+            transition: all 0.25s;
+            font-size: 15px;
+        }
+        .phone-link:hover, .phone-link:active {
+            background: rgba(212,175,55,0.18);
+            color: var(--gold);
+        }
+        .phone-link i { color: var(--gold); font-size: 13px; width: auto; }
+
+        /* ── شريط الحالة ── */
         .status-bar {
-            margin-bottom: 18px; padding: 13px 20px; border-radius: 14px;
+            margin-bottom: 14px; padding: 12px 18px; border-radius: 14px;
             display: flex; align-items: center; gap: 10px;
             font-size: 15px; font-weight: 700; transition: all 0.4s;
         }
@@ -89,6 +103,37 @@
         .s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .status-bar.open   .s-dot { background: #2ed573; animation: pulse 1.5s infinite; }
         .status-bar.closed .s-dot { background: #ff6b7a; }
+
+        .card {
+            background: var(--card-bg); backdrop-filter: blur(10px); padding: 26px;
+            border-radius: 24px; border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        h3 { font-size: 20px; font-weight: 700; margin-bottom: 18px; text-align: center; }
+        .input-group { position: relative; margin-bottom: 16px; }
+        .input-group i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .input-group input {
+            width: 100%; padding: 15px 45px 15px 15px; background: #12141a;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
+            color: white; font-size: 16px; outline: none; text-align: center; font-family: 'Cairo', sans-serif;
+        }
+        .input-group input:focus { border-color: var(--gold); }
+
+        /* حقل الموبايل - اتجاه LTR للأرقام */
+        .input-group input[type="tel"] {
+            direction: ltr;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .main-btn {
+            width: 100%; padding: 16px; border-radius: 14px; border: none;
+            background: var(--gold); color: #0b0c10; font-size: 18px; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+            font-family: 'Cairo', sans-serif; transition: all 0.3s ease; margin-top: 4px;
+        }
+        .main-btn:hover { background: var(--gold-hover); transform: translateY(-2px); }
+        .main-btn:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
 
         #closedScreen { display: none; text-align: center; padding: 10px 0; }
         .closed-emoji { font-size: 80px; display: block; margin-bottom: 15px; animation: bounceIn 0.6s ease; }
@@ -99,19 +144,19 @@
         .status-pill {
             background: rgba(214,175,55,0.1); color: var(--gold); padding: 8px 20px;
             border-radius: 50px; display: inline-flex; align-items: center; gap: 8px;
-            font-size: 14px; font-weight: 600; margin-bottom: 25px;
+            font-size: 14px; font-weight: 600; margin-bottom: 22px;
         }
         .pulse-dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 1.5s infinite; }
         .counter-box {
-            background: #12141a; padding: 25px; border-radius: 20px;
-            margin: 20px 0; border: 1px solid rgba(255,255,255,0.03);
+            background: #12141a; padding: 22px; border-radius: 20px;
+            margin: 18px 0; border: 1px solid rgba(255,255,255,0.03);
         }
         .number-big { font-size: 70px; font-weight: 900; color: var(--gold); line-height: 1; margin-top: 10px; }
 
         .done-btn {
-            margin-top: 22px; width: 100%; padding: 20px; border-radius: 16px; border: none;
+            margin-top: 20px; width: 100%; padding: 18px; border-radius: 16px; border: none;
             background: linear-gradient(135deg, #2ed573, #1db954);
-            color: #fff; font-size: 22px; font-weight: 900;
+            color: #fff; font-size: 20px; font-weight: 900;
             cursor: pointer; display: none; justify-content: center; align-items: center; gap: 12px;
             font-family: 'Cairo', sans-serif; transition: all 0.3s ease;
             box-shadow: 0 8px 30px rgba(46,213,115,0.45);
@@ -158,9 +203,24 @@
 
     <div class="container">
     
-        <!-- ✅ صورة الغلاف داخل الصفحة -->
+        <!-- صورة الغلاف مصغرة -->
         <div class="cover-image animated">
             <img src="cover.jpg" alt="غلاف الصالون">
+        </div>
+
+        <!-- بطاقة معلومات الصالون -->
+        <div class="salon-info animated">
+            <div class="info-row">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>زنكوره &nbsp;|&nbsp; قرب جملة حجي خميس</span>
+            </div>
+            <div class="info-row">
+                <i class="fas fa-phone"></i>
+                <a class="phone-link" href="tel:+9647800750071">
+                    <i class="fas fa-phone-alt"></i>
+                    0780 075 0071
+                </a>
+            </div>
         </div>
 
         <!-- شريط حالة الصالون -->
@@ -183,6 +243,10 @@
                 <i class="fas fa-user"></i>
                 <input type="text" id="name" placeholder="أدخل اسمك الكريم" autocomplete="off">
             </div>
+            <div class="input-group">
+                <i class="fas fa-mobile-alt"></i>
+                <input type="tel" id="phone" placeholder="07XX XXX XXXX" autocomplete="off" inputmode="tel">
+            </div>
             <button class="main-btn" id="submitBtn" onclick="book()">
                 <i class="fas fa-check"></i> تأكيد الحجز
             </button>
@@ -201,7 +265,7 @@
             </div>
             <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.8;"></p>
             <button class="done-btn" id="doneBtn" onclick="showConfirm()">
-                <span style="font-size:26px;">✅</span> انتهيت من الحلاقة
+                <span style="font-size:24px;">✅</span> انتهيت من الحلاقة
             </button>
         </div>
 
@@ -234,7 +298,7 @@
         let myName = null;
         let updateInterval = null;
         let alreadyNotified = false;
-        let salonIsOpen = null; 
+        let salonIsOpen = null;
 
         function renderSalonStatus(isOpen) {
             salonIsOpen = isOpen;
@@ -258,7 +322,6 @@
             renderSalonStatus(isOpen);
 
             if (myId) return;
-
             if (document.getElementById('finishScreen').style.display === 'block') return;
 
             if (isOpen) {
@@ -273,8 +336,8 @@
         window.addEventListener('load', async () => {
             await fetchSalonStatus();
 
-            const savedId      = localStorage.getItem('salon_myId');
-            const savedName    = localStorage.getItem('salon_myName');
+            const savedId       = localStorage.getItem('salon_myId');
+            const savedName     = localStorage.getItem('salon_myName');
             const savedNotified = localStorage.getItem('salon_notified') === 'true';
 
             if (savedId && savedName) {
@@ -313,32 +376,80 @@
             localStorage.removeItem('salon_notified');
         }
 
+        /* ── صوت تنبيه مميز ومرتب (نغمة احترافية) ── */
         function playTurnSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const notes = [523, 659, 784];
-                notes.forEach((freq, i) => {
-                    const osc = ctx.createOscillator();
+
+                // نغمة ثلاثية صاعدة + ترددات تشابكية
+                const melody = [
+                    { freq: 440,  start: 0.0,  dur: 0.35, type: 'sine',     vol: 0.45 },
+                    { freq: 554,  start: 0.3,  dur: 0.35, type: 'sine',     vol: 0.45 },
+                    { freq: 659,  start: 0.6,  dur: 0.5,  type: 'sine',     vol: 0.5  },
+                    { freq: 880,  start: 0.9,  dur: 0.7,  type: 'triangle', vol: 0.35 },
+                ];
+
+                melody.forEach(({ freq, start, dur, type, vol }) => {
+                    const osc  = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.type = 'sine'; osc.frequency.value = freq;
-                    const s = ctx.currentTime + i * 0.3;
+
+                    // reverb بسيط
+                    const delay = ctx.createDelay(0.2);
+                    const fb    = ctx.createGain();
+                    delay.delayTime.value = 0.18;
+                    fb.gain.value = 0.25;
+                    delay.connect(fb);
+                    fb.connect(delay);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    gain.connect(delay);
+                    delay.connect(ctx.destination);
+
+                    osc.type = type;
+                    osc.frequency.value = freq;
+
+                    const s = ctx.currentTime + start;
                     gain.gain.setValueAtTime(0, s);
-                    gain.gain.linearRampToValueAtTime(0.5, s + 0.05);
-                    gain.gain.exponentialRampToValueAtTime(0.001, s + 0.6);
-                    osc.start(s); osc.stop(s + 0.6);
+                    gain.gain.linearRampToValueAtTime(vol, s + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, s + dur);
+                    osc.start(s);
+                    osc.stop(s + dur + 0.25);
                 });
-            } catch(e) {}
+
+                // نبضة بيت خفيفة في البداية
+                const drumOsc  = ctx.createOscillator();
+                const drumGain = ctx.createGain();
+                drumOsc.connect(drumGain);
+                drumGain.connect(ctx.destination);
+                drumOsc.type = 'sine';
+                drumOsc.frequency.setValueAtTime(180, ctx.currentTime);
+                drumOsc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+                drumGain.gain.setValueAtTime(0.6, ctx.currentTime);
+                drumGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                drumOsc.start(ctx.currentTime);
+                drumOsc.stop(ctx.currentTime + 0.2);
+
+            } catch(e) { console.warn('Sound error:', e); }
         }
 
         async function book() {
-            const nameInput = document.getElementById('name');
-            const submitBtn = document.getElementById('submitBtn');
-            const name = nameInput.value.trim();
+            const nameInput  = document.getElementById('name');
+            const phoneInput = document.getElementById('phone');
+            const submitBtn  = document.getElementById('submitBtn');
+            const name  = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
 
             if (!name) {
                 nameInput.style.borderColor = '#ff4d4d';
                 nameInput.placeholder = 'يرجى كتابة اسمك أولاً!';
+                nameInput.focus();
+                return;
+            }
+            if (!phone) {
+                phoneInput.style.borderColor = '#ff4d4d';
+                phoneInput.placeholder = 'يرجى كتابة رقم موبايلك!';
+                phoneInput.focus();
                 return;
             }
 
@@ -348,7 +459,7 @@
             try {
                 const { data, error } = await db
                     .from('appointments')
-                    .insert([{ customer_name: name, status: 'pending' }])
+                    .insert([{ customer_name: name, phone: phone, status: 'pending' }])
                     .select();
 
                 if (error) throw error;
@@ -413,7 +524,7 @@
             } catch(e) {}
         }
 
-        function showConfirm() { document.getElementById('confirmOverlay').classList.add('show'); }
+        function showConfirm()  { document.getElementById('confirmOverlay').classList.add('show'); }
         function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('show'); }
 
         async function confirmDone() {
