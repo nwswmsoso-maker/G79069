@@ -3,19 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <link rel="icon" href="cover.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="cover.jpg">
-
     <meta property="og:title" content="صالون محمد عدنان - الحجز">
     <meta property="og:description" content="احجز دورك للحلاقة الآن بكل سهولة وبدون انتظار طويل في صالون محمد عدنان.">
     <meta property="og:image" content="cover.jpg">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="cover.jpg">
-
     <title>صالون محمد عدنان - الحجز</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -36,22 +32,22 @@
         .header h1 { font-size: 26px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
 
-        /* ── صورة الغلاف مصغرة ومرتبة ── */
+        /* صورة الغلاف - تظهر كاملة بدون قص */
         .cover-image {
             width: 100%;
-            height: 130px;
             margin-bottom: 14px;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
             border: 1px solid var(--border-color);
+            background: #12141a;
         }
         .cover-image img {
-            width: 100%; height: 100%;
-            object-fit: cover; display: block;
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
-        /* ── بطاقة معلومات الصالون ── */
         .salon-info {
             background: rgba(20,22,30,0.85);
             border: 1px solid var(--border-color);
@@ -86,13 +82,9 @@
             transition: all 0.25s;
             font-size: 15px;
         }
-        .phone-link:hover, .phone-link:active {
-            background: rgba(212,175,55,0.18);
-            color: var(--gold);
-        }
+        .phone-link:hover, .phone-link:active { background: rgba(212,175,55,0.18); color: var(--gold); }
         .phone-link i { color: var(--gold); font-size: 13px; width: auto; }
 
-        /* ── شريط الحالة ── */
         .status-bar {
             margin-bottom: 14px; padding: 12px 18px; border-radius: 14px;
             display: flex; align-items: center; gap: 10px;
@@ -118,12 +110,17 @@
             color: white; font-size: 16px; outline: none; text-align: center; font-family: 'Cairo', sans-serif;
         }
         .input-group input:focus { border-color: var(--gold); }
-
-        /* حقل الموبايل - اتجاه LTR للأرقام */
         .input-group input[type="tel"] {
             direction: ltr;
             text-align: center;
             letter-spacing: 1px;
+        }
+        .phone-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 14px;
         }
 
         .main-btn {
@@ -202,8 +199,8 @@
     </div>
 
     <div class="container">
-    
-        <!-- صورة الغلاف مصغرة -->
+
+        <!-- صورة الغلاف كاملة بدون قص -->
         <div class="cover-image animated">
             <img src="cover.jpg" alt="غلاف الصالون">
         </div>
@@ -238,15 +235,16 @@
 
         <!-- فورم الحجز -->
         <div class="card animated" id="bookingForm" style="display:none;">
-            <h3>احجز للحلاقة الآن</h3>
+            <h3>احجز حلاقة لنفسك فقط</h3>
             <div class="input-group">
                 <i class="fas fa-user"></i>
                 <input type="text" id="name" placeholder="أدخل اسمك الكريم" autocomplete="off">
             </div>
             <div class="input-group">
                 <i class="fas fa-mobile-alt"></i>
-                <input type="tel" id="phone" placeholder="07XX XXX XXXX" autocomplete="off" inputmode="tel">
+                <input type="tel" id="phone" placeholder="07XX XXX XXXX" autocomplete="off" inputmode="numeric" maxlength="11">
             </div>
+            <p class="phone-hint">يجب أن يكون الرقم مكوناً من 11 رقم</p>
             <button class="main-btn" id="submitBtn" onclick="book()">
                 <i class="fas fa-check"></i> تأكيد الحجز
             </button>
@@ -317,13 +315,10 @@
         async function fetchSalonStatus() {
             const { data, error } = await db.from('salon_status').select('is_open').eq('id', 1).single();
             if (error || !data) return;
-
             const isOpen = data.is_open;
             renderSalonStatus(isOpen);
-
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
-
             if (isOpen) {
                 document.getElementById('closedScreen').style.display = 'none';
                 document.getElementById('bookingForm').style.display = 'block';
@@ -335,32 +330,26 @@
 
         window.addEventListener('load', async () => {
             await fetchSalonStatus();
-
             const savedId       = localStorage.getItem('salon_myId');
             const savedName     = localStorage.getItem('salon_myName');
             const savedNotified = localStorage.getItem('salon_notified') === 'true';
-
             if (savedId && savedName) {
                 const { data, error } = await db
                     .from('appointments').select('*').eq('id', savedId).single();
-
                 if (!error && data && data.status !== 'completed') {
                     myId   = parseInt(savedId);
                     myName = savedName;
                     alreadyNotified = savedNotified;
-
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('closedScreen').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = myName;
-
                     updateUI();
                     updateInterval = setInterval(updateUI, 4000);
                 } else {
                     clearStorage();
                 }
             }
-
             setInterval(fetchSalonStatus, 5000);
         });
 
@@ -376,39 +365,30 @@
             localStorage.removeItem('salon_notified');
         }
 
-        /* ── صوت تنبيه مميز ومرتب (نغمة احترافية) ── */
         function playTurnSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-                // نغمة ثلاثية صاعدة + ترددات تشابكية
                 const melody = [
                     { freq: 440,  start: 0.0,  dur: 0.35, type: 'sine',     vol: 0.45 },
                     { freq: 554,  start: 0.3,  dur: 0.35, type: 'sine',     vol: 0.45 },
                     { freq: 659,  start: 0.6,  dur: 0.5,  type: 'sine',     vol: 0.5  },
                     { freq: 880,  start: 0.9,  dur: 0.7,  type: 'triangle', vol: 0.35 },
                 ];
-
                 melody.forEach(({ freq, start, dur, type, vol }) => {
                     const osc  = ctx.createOscillator();
                     const gain = ctx.createGain();
-
-                    // reverb بسيط
                     const delay = ctx.createDelay(0.2);
                     const fb    = ctx.createGain();
                     delay.delayTime.value = 0.18;
                     fb.gain.value = 0.25;
                     delay.connect(fb);
                     fb.connect(delay);
-
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     gain.connect(delay);
                     delay.connect(ctx.destination);
-
                     osc.type = type;
                     osc.frequency.value = freq;
-
                     const s = ctx.currentTime + start;
                     gain.gain.setValueAtTime(0, s);
                     gain.gain.linearRampToValueAtTime(vol, s + 0.04);
@@ -416,8 +396,6 @@
                     osc.start(s);
                     osc.stop(s + dur + 0.25);
                 });
-
-                // نبضة بيت خفيفة في البداية
                 const drumOsc  = ctx.createOscillator();
                 const drumGain = ctx.createGain();
                 drumOsc.connect(drumGain);
@@ -429,7 +407,6 @@
                 drumGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
                 drumOsc.start(ctx.currentTime);
                 drumOsc.stop(ctx.currentTime + 0.2);
-
             } catch(e) { console.warn('Sound error:', e); }
         }
 
@@ -438,7 +415,7 @@
             const phoneInput = document.getElementById('phone');
             const submitBtn  = document.getElementById('submitBtn');
             const name  = nameInput.value.trim();
-            const phone = phoneInput.value.trim();
+            const phone = phoneInput.value.trim().replace(/\s/g, '');
 
             if (!name) {
                 nameInput.style.borderColor = '#ff4d4d';
@@ -446,9 +423,12 @@
                 nameInput.focus();
                 return;
             }
-            if (!phone) {
+
+            /* التحقق: 11 رقم بالضبط */
+            if (!/^\d{11}$/.test(phone)) {
                 phoneInput.style.borderColor = '#ff4d4d';
-                phoneInput.placeholder = 'يرجى كتابة رقم موبايلك!';
+                phoneInput.value = '';
+                phoneInput.placeholder = 'الرقم يجب أن يكون 11 رقم بالضبط!';
                 phoneInput.focus();
                 return;
             }
@@ -468,12 +448,10 @@
                     myId   = data[0].id;
                     myName = name;
                     saveToStorage();
-
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('closedScreen').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = name;
-
                     updateUI();
                     updateInterval = setInterval(updateUI, 4000);
                 }
@@ -489,9 +467,7 @@
             try {
                 const { data: appt, error } = await db
                     .from('appointments').select('*').eq('id', myId).single();
-
                 if (error) return;
-
                 if (appt.status === 'approved') {
                     clearInterval(updateInterval);
                     if (!alreadyNotified) {
@@ -508,14 +484,12 @@
                     document.getElementById('queueNumber').style.color = '#2ed573';
                     document.getElementById('msg').innerHTML = 'تفضل للكرسي الآن 💈<br>نعيماً مقدماً!';
                     document.getElementById('doneBtn').style.display = 'flex';
-
                 } else if (appt.status === 'pending') {
                     const { count } = await db
                         .from('appointments')
                         .select('*', { count: 'exact', head: true })
                         .in('status', ['pending', 'approved'])
                         .lt('id', myId);
-
                     document.getElementById('queueNumber').innerText = count ?? 0;
                     document.getElementById('msg').innerText = count === 0
                         ? 'أنت التالي مباشرة! استعد 💈'
