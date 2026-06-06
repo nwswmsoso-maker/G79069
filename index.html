@@ -65,7 +65,7 @@
             justify-content: center; align-items: center; gap: 10px; box-shadow: 0 8px 20px rgba(214,175,55,0.2);
         }
         button:hover { background: var(--gold-hover); transform: translateY(-2px); }
-        button:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
+        button:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .queue-display { display: none; text-align: center; }
         .status-pill { background: rgba(214, 175, 55, 0.1); color: var(--gold); padding: 8px 20px; border-radius: 50px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; margin-bottom: 25px; }
@@ -77,9 +77,6 @@
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
-
-        .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-radius: 50%; border-top-color: #000; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -99,10 +96,7 @@
                 <input type="text" id="name" placeholder="أدخل اسمك الكريم" autocomplete="off">
             </div>
 
-            <button id="submitBtn" onclick="book()">
-                <span>تأكيد الحجز</span>
-                <div class="spinner" id="btnSpinner"></div>
-            </button>
+            <button id="submitBtn" onclick="book()">تأكيد الحجز</button>
         </div>
 
         <!-- واجهة قائمة الانتظار -->
@@ -111,7 +105,7 @@
             
             <div class="status-pill">
                 <div class="pulse-dot"></div>
-                <span id="statusText">جاري حساب دورك...</span>
+                <span id="statusText">تم الحجز بنجاح! جاري حساب دورك...</span>
             </div>
 
             <div class="counter-box">
@@ -124,52 +118,70 @@
     </div>
 
     <script>
-        // --- تنبيه: يجب وضع الـ URL والـ KEY الخاصين بك هنا ---
-        const supabaseUrl = 'URL'; 
-        const supabaseKey = 'KEY';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        // ⚠️ مهم جداً: خلي الروابط الخاصة بيك بين الأقواس (لا تمسح الأقواس المقلوبة '')
+        // الرابط لازم يبدأ بـ https://
+        const supabaseUrl = 'رابط_السوبابيس_هنا'; 
+        const supabaseKey = 'مفتاح_السوبابيس_هنا';
+
+        let supabase;
+        try {
+            supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        } catch (error) {
+            console.error("خطأ في تهيئة Supabase:", error);
+        }
 
         let myId = null;
 
         async function book() {
             const nameInput = document.getElementById('name');
             const submitBtn = document.getElementById('submitBtn');
-            const btnSpinner = document.getElementById('btnSpinner');
-            
             const name = nameInput.value.trim();
+
             if(!name) {
+                alert("يرجى كتابة اسمك أولاً!");
                 nameInput.style.borderColor = "#ff4d4d";
                 return;
             }
 
+            // التأكد من وضع الرابط والمفتاح
+            if (supabaseUrl === 'رابط_السوبابيس_هنا' || !supabaseUrl.startsWith('https://')) {
+                alert("خطأ: يرجى إضافة رابط Supabase الحقيقي في الكود (السطر 100)");
+                return;
+            }
+
+            // تحويل الزر إلى حالة التحميل
+            submitBtn.innerText = "جاري الحجز...";
             submitBtn.disabled = true;
-            btnSpinner.style.display = 'block';
 
             try {
-                // نرسل الاسم فقط إلى قاعدة البيانات
                 const { data, error } = await supabase
                     .from('appointments')
                     .insert([{ customer_name: name }])
                     .select();
 
                 if (error) {
-                    console.error("تفاصيل الخطأ من قاعدة البيانات:", error);
                     throw error;
                 }
 
-                if(data && data.length > 0) {
+                if (data && data.length > 0) {
                     myId = data[0].id;
                     
+                    // إخفاء الحجز وإظهار شاشة الانتظار
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     
+                    // تحديث الواجهة فوراً
                     updateUI();
                     setInterval(updateUI, 4000);
+                } else {
+                    alert("عذراً، لم يتم إرجاع أي بيانات. تأكد من جدول المواعيد.");
+                    submitBtn.innerText = "تأكيد الحجز";
+                    submitBtn.disabled = false;
                 }
             } catch (err) {
-                alert("حدث خطأ! يرجى التأكد من إضافة رابط ومفتاح Supabase في الكود، ومن صلاحيات قاعدة البيانات.");
+                alert("حدث خطأ أثناء الحجز: " + err.message);
+                submitBtn.innerText = "تأكيد الحجز";
                 submitBtn.disabled = false;
-                btnSpinner.style.display = 'none';
             }
         }
 
