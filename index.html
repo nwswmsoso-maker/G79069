@@ -409,21 +409,22 @@
 
                 if (appt.status === 'approved') {
                     clearInterval(updateInterval);
-                    // نكمل البولينج بشكل أبطأ لمعرفة متى يصير completed
                     updateInterval = setInterval(updateUI, 3000);
                     if (!alreadyNotified) {
                         alreadyNotified = true;
                         localStorage.setItem('salon_notified', 'true');
                         playTurnSound();
                     }
-                    const pill = document.querySelector('.status-pill');
-                    pill.style.background = 'rgba(46,213,115,0.1)';
-                    pill.style.color = '#2ed573';
-                    document.querySelector('.pulse-dot').style.background = '#2ed573';
-                    document.getElementById('statusText').innerText = '✂️ حان دورك الآن!';
-                    document.getElementById('queueNumber').innerText = '✂️';
-                    document.getElementById('queueNumber').style.color = '#2ed573';
-                    document.getElementById('msg').innerHTML = 'تفضل للكرسي الآن 💈<br>نعيماً مقدماً!';
+                    // إخفاء العداد وإظهار شاشة واضحة
+                    document.getElementById('statusText').innerText = '';
+                    document.querySelector('.status-pill').style.display = 'none';
+                    document.querySelector('.counter-box').style.display = 'none';
+                    document.getElementById('msg').innerHTML = \`
+                        <div style="margin-top:10px;">
+                            <div style="font-size:80px;margin-bottom:10px;">✂️</div>
+                            <div style="font-size:24px;font-weight:900;color:#2ed573;margin-bottom:8px;">حان دورك الآن!</div>
+                            <div style="font-size:16px;color:#a0aec0;">تفضل للكرسي 💈<br>نعيماً مقدماً!</div>
+                        </div>\`;
 
                 } else if (appt.status === 'pending') {
                     const { count } = await db
