@@ -223,6 +223,7 @@
         let myId = null;
         let myName = null;
         let updateInterval = null;
+        let statusInterval = null;
         let alreadyNotified = false;
         let salonIsOpen = null;
 
@@ -243,7 +244,15 @@
         async function fetchSalonStatus() {
             const { data, error } = await db.from('salon_status').select('is_open').eq('id', 1).single();
             if (error || !data) return;
+            const wasOpen = salonIsOpen;
             renderSalonStatus(data.is_open);
+
+            // تعديل سرعة الفحص حسب حالة الصالون
+            if (wasOpen !== data.is_open) {
+                clearInterval(statusInterval);
+                statusInterval = setInterval(fetchSalonStatus, data.is_open ? 5000 : 30000);
+            }
+
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
             if (data.is_open) {
@@ -276,7 +285,7 @@
                     clearStorage();
                 }
             }
-            setInterval(fetchSalonStatus, 5000);
+            statusInterval = setInterval(fetchSalonStatus, 5000);
         });
 
         function saveToStorage() {
