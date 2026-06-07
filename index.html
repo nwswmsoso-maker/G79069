@@ -291,11 +291,26 @@
             localStorage.removeItem('salon_notified');
         }
 
-        /* زر إغلاق شاشة النهاية — يرجع لصفحة الحجز */
+        /* زر إغلاق شاشة النهاية — يرجع لصفحة الحجز نظيفة */
         function skipFinish() {
             clearStorage();
             myId = null;
-            document.getElementById('finishScreen').style.display = 'none';
+            myName = null;
+            alreadyNotified = false;
+            clearInterval(updateInterval);
+
+            ['finishScreen','queueDisplay','closedScreen','bookingForm'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+
+            const nameEl = document.getElementById('name');
+            const phoneEl = document.getElementById('phone');
+            const btn = document.getElementById('submitBtn');
+            nameEl.value = ''; nameEl.style.borderColor = ''; nameEl.placeholder = 'أدخل اسمك الكريم';
+            phoneEl.value = ''; phoneEl.style.borderColor = ''; phoneEl.placeholder = '07XX XXX XXXX';
+            btn.innerHTML = '<i class="fas fa-check"></i> تأكيد الحجز';
+            btn.disabled = false;
+
             fetchSalonStatus();
         }
 
