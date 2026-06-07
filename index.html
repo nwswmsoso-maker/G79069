@@ -419,12 +419,12 @@
                     document.getElementById('statusText').innerText = '';
                     document.querySelector('.status-pill').style.display = 'none';
                     document.querySelector('.counter-box').style.display = 'none';
-                    document.getElementById('msg').innerHTML = \`
-                        <div style="margin-top:10px;">
-                            <div style="font-size:80px;margin-bottom:10px;">✂️</div>
-                            <div style="font-size:24px;font-weight:900;color:#2ed573;margin-bottom:8px;">حان دورك الآن!</div>
-                            <div style="font-size:16px;color:#a0aec0;">تفضل للكرسي 💈<br>نعيماً مقدماً!</div>
-                        </div>\`;
+                    document.getElementById('msg').innerHTML =
+                        '<div style="margin-top:10px;">' +
+                        '<div style="font-size:80px;margin-bottom:10px;">✂️</div>' +
+                        '<div style="font-size:24px;font-weight:900;color:#2ed573;margin-bottom:8px;">حان دورك الآن!</div>' +
+                        '<div style="font-size:16px;color:#a0aec0;">تفضل للكرسي 💈<br>نعيماً مقدماً!</div>' +
+                        '</div>';
 
                 } else if (appt.status === 'pending') {
                     const { count } = await db
