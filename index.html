@@ -31,14 +31,12 @@
         .header .logo-icon { font-size: 40px; color: var(--gold); margin-bottom: 8px; }
         .header h1 { font-size: 26px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
-
         .cover-image {
             width: 140px; height: 140px; margin: 0 auto 14px; border-radius: 20px;
             overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);
             border: 1px solid var(--border-color); background: #12141a;
         }
         .cover-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-
         .salon-info {
             background: rgba(20,22,30,0.85); border: 1px solid var(--border-color);
             border-radius: 18px; padding: 14px 18px; margin-bottom: 14px;
@@ -54,7 +52,6 @@
         }
         .phone-link:hover, .phone-link:active { background: rgba(212,175,55,0.18); color: var(--gold); }
         .phone-link i { color: var(--gold); font-size: 13px; width: auto; }
-
         .status-bar {
             margin-bottom: 14px; padding: 12px 18px; border-radius: 14px;
             display: flex; align-items: center; gap: 10px;
@@ -65,7 +62,6 @@
         .s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .status-bar.open   .s-dot { background: #2ed573; animation: pulse 1.5s infinite; }
         .status-bar.closed .s-dot { background: #ff6b7a; }
-
         .card {
             background: var(--card-bg); backdrop-filter: blur(10px); padding: 26px;
             border-radius: 24px; border: 1px solid var(--border-color);
@@ -83,7 +79,6 @@
         .input-group input:focus { border-color: var(--gold); }
         .input-group input[type="tel"] { direction: ltr; text-align: center; letter-spacing: 1px; }
         .phone-hint { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: -10px; margin-bottom: 14px; }
-
         .main-btn {
             width: 100%; padding: 16px; border-radius: 14px; border: none;
             background: var(--gold); color: #0b0c10; font-size: 18px; font-weight: 800;
@@ -92,12 +87,10 @@
         }
         .main-btn:hover { background: var(--gold-hover); transform: translateY(-2px); }
         .main-btn:disabled { background: #4a4a4a; color: #8a8a8a; cursor: not-allowed; transform: none; }
-
         #closedScreen { display: none; text-align: center; padding: 10px 0; }
         .closed-emoji { font-size: 80px; display: block; margin-bottom: 15px; animation: bounceIn 0.6s ease; }
         .closed-title { font-size: 24px; font-weight: 900; color: #ff6b7a; margin-bottom: 10px; }
         .closed-sub { font-size: 14px; color: var(--text-muted); line-height: 2; }
-
         #queueDisplay { display: none; text-align: center; }
         .status-pill {
             background: rgba(214,175,55,0.1); color: var(--gold); padding: 8px 20px;
@@ -110,12 +103,10 @@
             margin: 18px 0; border: 1px solid rgba(255,255,255,0.03);
         }
         .number-big { font-size: 70px; font-weight: 900; color: var(--gold); line-height: 1; margin-top: 10px; }
-
         #finishScreen { display: none; text-align: center; padding: 15px 0; }
         .finish-emoji { font-size: 90px; margin-bottom: 15px; animation: bounceIn 0.8s ease; display: block; }
         .finish-title { font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 12px; }
         .finish-sub { font-size: 15px; color: var(--text-muted); line-height: 2; margin-bottom: 24px; }
-
         .skip-btn {
             width: 100%; padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05); color: #cbd5e0;
@@ -124,7 +115,6 @@
             font-family: 'Cairo', sans-serif; transition: all 0.3s;
         }
         .skip-btn:hover, .skip-btn:active { background: rgba(255,255,255,0.1); color: #fff; }
-
         @keyframes pulse { 0%,100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
@@ -132,18 +122,14 @@
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="logo-icon"><i class="fas fa-scissors"></i></div>
         <h1>صالون محمد عدنان</h1>
     </div>
-
     <div class="container">
-
         <div class="cover-image animated">
             <img src="cover.jpg" alt="غلاف الصالون">
         </div>
-
         <div class="salon-info animated">
             <div class="info-row">
                 <i class="fas fa-map-marker-alt"></i>
@@ -161,18 +147,15 @@
                 <span>أوقات العمل: من ساعة 10 صباحاً الى ساعة 10 مساءً</span>
             </div>
         </div>
-
         <div class="status-bar" id="salonStatusBar" style="display:none;">
             <div class="s-dot"></div>
             <span id="salonStatusText"></span>
         </div>
-
         <div class="card animated" id="closedScreen">
             <span class="closed-emoji">🔒</span>
             <div class="closed-title">الصالون مغلق حالياً</div>
             <div class="closed-sub">نأسف، الصالون غير متاح الآن<br>يرجى المحاولة لاحقاً ✂️</div>
         </div>
-
         <div class="card animated" id="bookingForm" style="display:none;">
             <h3>احجز حلاقة لنفسك فقط</h3>
             <div class="input-group">
@@ -188,7 +171,6 @@
                 <i class="fas fa-check"></i> تأكيد الحجز
             </button>
         </div>
-
         <div class="card animated" id="queueDisplay">
             <h3>مرحباً، <span id="displayName" style="color: var(--gold);"></span></h3>
             <div class="status-pill" id="statusPill">
@@ -201,7 +183,6 @@
             </div>
             <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.8;"></p>
         </div>
-
         <div class="card animated" id="finishScreen">
             <span class="finish-emoji">💈</span>
             <div class="finish-title">نعيماً يا عيوني! 🎉</div>
@@ -243,12 +224,10 @@
             if (error || !data) return;
             const wasOpen = salonIsOpen;
             renderSalonStatus(data.is_open);
-
             if (wasOpen !== data.is_open) {
                 clearInterval(statusInterval);
                 statusInterval = setInterval(fetchSalonStatus, data.is_open ? 5000 : 30000);
             }
-
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
             if (data.is_open) {
@@ -298,29 +277,25 @@
 
         function skipFinish() {
             clearStorage();
-            myId = null;
-            myName = null;
-            alreadyNotified = false;
+            myId = null; myName = null; alreadyNotified = false;
             clearInterval(updateInterval);
-
             ['finishScreen','queueDisplay','closedScreen','bookingForm'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
-
-            // إعادة تهيئة عناصر الطابور
+            // إعادة تهيئة شاشة الطابور
             document.getElementById('statusPill').style.display = '';
             document.getElementById('counterBox').style.display = '';
             document.getElementById('statusText').innerText = 'أنت في قائمة الانتظار';
             document.getElementById('msg').innerHTML = '';
+            document.getElementById('queueNumber').innerText = '--';
 
-            const nameEl  = document.getElementById('name');
+            const nameEl = document.getElementById('name');
             const phoneEl = document.getElementById('phone');
-            const btn     = document.getElementById('submitBtn');
-            nameEl.value  = ''; nameEl.style.borderColor  = ''; nameEl.placeholder  = 'أدخل اسمك الكريم';
+            const btn = document.getElementById('submitBtn');
+            nameEl.value = ''; nameEl.style.borderColor = ''; nameEl.placeholder = 'أدخل اسمك الكريم';
             phoneEl.value = ''; phoneEl.style.borderColor = ''; phoneEl.placeholder = '07XX XXX XXXX';
             btn.innerHTML = '<i class="fas fa-check"></i> تأكيد الحجز';
-            btn.disabled  = false;
-
+            btn.disabled = false;
             fetchSalonStatus();
         }
 
@@ -362,7 +337,6 @@
             const submitBtn  = document.getElementById('submitBtn');
             const name  = nameInput.value.trim();
             const phone = phoneInput.value.trim().replace(/\s/g, '');
-
             if (!name) {
                 nameInput.style.borderColor = '#ff4d4d';
                 nameInput.placeholder = 'يرجى كتابة اسمك أولاً!';
@@ -374,10 +348,8 @@
                 phoneInput.placeholder = 'الرقم يجب أن يكون 11 رقم بالضبط!';
                 phoneInput.focus(); return;
             }
-
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحجز...';
             submitBtn.disabled = true;
-
             try {
                 const { data, error } = await db
                     .from('appointments')
@@ -404,16 +376,12 @@
         async function updateUI() {
             if (!myId) return;
             try {
-                // 1. جلب بيانات حجز الزبون الحالي
                 const { data: appt, error: fetchError } = await db
                     .from('appointments').select('*').eq('id', myId).single();
 
-                if (fetchError) {
-                    console.error("خطأ في جلب حالة الحجز:", fetchError);
-                    return;
-                }
+                if (fetchError) { console.error("خطأ:", fetchError); return; }
 
-                // ✅ الخدمة انتهت — شاشة نعيماً
+                // ✅ انتهت الخدمة
                 if (appt.status === 'completed') {
                     clearInterval(updateInterval);
                     clearStorage();
@@ -423,45 +391,43 @@
                     return;
                 }
 
-                // 2. دائماً نجيب عدد المنتظرين قبل الزبون (pending أو approved)
-                const { count, error: countError } = await db
-                    .from('appointments')
-                    .select('*', { count: 'exact', head: true })
-                    .in('status', ['pending', 'approved'])
-                    .lt('id', myId);
-
-                if (countError) {
-                    console.error("خطأ في حساب الطابور:", countError);
-                    document.getElementById('queueNumber').innerHTML =
-                        '<i class="fas fa-spinner fa-spin" style="font-size:40px;color:#a0aec0;"></i>';
-                    return;
-                }
-
-                const ahead = count ?? 0;
-
-                // 3. عرض العداد دائماً
-                document.getElementById('statusPill').style.display = '';
-                document.getElementById('counterBox').style.display = '';
-                document.getElementById('queueNumber').innerText = ahead;
-
-                // 4. لو حان دوره (approved + صفر قدامه) — نبين رسالة "حان دورك"
-                if (appt.status === 'approved' && ahead === 0) {
+                // ✅ approved = حان دوره — يشوف "حان دورك" فقط بدون عداد
+                if (appt.status === 'approved') {
                     if (!alreadyNotified) {
                         alreadyNotified = true;
                         localStorage.setItem('salon_notified', 'true');
                         playTurnSound();
                     }
-                    document.getElementById('statusText').innerText = 'حان دورك الآن! ✂️';
+                    document.getElementById('statusPill').style.display = 'none';
+                    document.getElementById('counterBox').style.display = 'none';
                     document.getElementById('msg').innerHTML =
                         '<div style="margin-top:10px;">' +
-                        '<div style="font-size:60px;margin-bottom:8px;">✂️</div>' +
-                        '<div style="font-size:22px;font-weight:900;color:#2ed573;margin-bottom:6px;">تفضل للكرسي 💈</div>' +
-                        '<div style="font-size:15px;color:#a0aec0;">نعيماً مقدماً!</div>' +
+                        '<div style="font-size:70px;margin-bottom:10px;">✂️</div>' +
+                        '<div style="font-size:26px;font-weight:900;color:#2ed573;margin-bottom:8px;">حان دورك الآن!</div>' +
+                        '<div style="font-size:16px;color:#a0aec0;">تفضل للكرسي 💈<br>نعيماً مقدماً!</div>' +
                         '</div>';
+                    return;
+                }
 
-                } else {
-                    // 5. ما زال ينتظر — عرض عدد المنتظرين فقط
+                // ✅ pending = لا زال ينتظر — يشوف العداد فقط
+                if (appt.status === 'pending') {
+                    const { count, error: countError } = await db
+                        .from('appointments')
+                        .select('*', { count: 'exact', head: true })
+                        .in('status', ['pending', 'approved'])
+                        .lt('id', myId);
+
+                    if (countError) {
+                        document.getElementById('queueNumber').innerHTML =
+                            '<i class="fas fa-spinner fa-spin" style="font-size:40px;color:#a0aec0;"></i>';
+                        return;
+                    }
+
+                    const ahead = count ?? 0;
+                    document.getElementById('statusPill').style.display = '';
+                    document.getElementById('counterBox').style.display = '';
                     document.getElementById('statusText').innerText = 'أنت في قائمة الانتظار';
+                    document.getElementById('queueNumber').innerText = ahead;
                     document.getElementById('msg').innerText = ahead === 0
                         ? 'أنت التالي مباشرة! استعد 💈'
                         : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
