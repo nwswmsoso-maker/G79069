@@ -32,55 +32,25 @@
         .header h1 { font-size: 26px; font-weight: 900; }
         .container { width: 100%; max-width: 480px; }
 
-        /* صورة الغلاف - تظهر كاملة بدون قص */
         .cover-image {
-            width: 100%;
-            margin-bottom: 14px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            border: 1px solid var(--border-color);
-            background: #12141a;
+            width: 100%; margin-bottom: 14px; border-radius: 20px;
+            overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color); background: #12141a;
         }
-        .cover-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .cover-image img { width: 100%; height: auto; display: block; }
 
         .salon-info {
-            background: rgba(20,22,30,0.85);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 14px 18px;
-            margin-bottom: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background: rgba(20,22,30,0.85); border: 1px solid var(--border-color);
+            border-radius: 18px; padding: 14px 18px; margin-bottom: 14px;
+            display: flex; flex-direction: column; gap: 10px;
         }
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: #cbd5e0;
-        }
+        .info-row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #cbd5e0; }
         .info-row i { color: var(--gold); font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
         .phone-link {
-            color: #cbd5e0;
-            text-decoration: none;
-            direction: ltr;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(212,175,55,0.08);
-            border: 1px solid rgba(212,175,55,0.2);
-            padding: 5px 14px;
-            border-radius: 30px;
-            transition: all 0.25s;
-            font-size: 15px;
+            color: #cbd5e0; text-decoration: none; direction: ltr; letter-spacing: 0.5px;
+            font-weight: 700; display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);
+            padding: 5px 14px; border-radius: 30px; transition: all 0.25s; font-size: 15px;
         }
         .phone-link:hover, .phone-link:active { background: rgba(212,175,55,0.18); color: var(--gold); }
         .phone-link i { color: var(--gold); font-size: 13px; width: auto; }
@@ -107,21 +77,12 @@
         .input-group input {
             width: 100%; padding: 15px 45px 15px 15px; background: #12141a;
             border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
-            color: white; font-size: 16px; outline: none; text-align: center; font-family: 'Cairo', sans-serif;
+            color: white; font-size: 16px; outline: none; text-align: center;
+            font-family: 'Cairo', sans-serif;
         }
         .input-group input:focus { border-color: var(--gold); }
-        .input-group input[type="tel"] {
-            direction: ltr;
-            text-align: center;
-            letter-spacing: 1px;
-        }
-        .phone-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-align: center;
-            margin-top: -10px;
-            margin-bottom: 14px;
-        }
+        .input-group input[type="tel"] { direction: ltr; text-align: center; letter-spacing: 1px; }
+        .phone-hint { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: -10px; margin-bottom: 14px; }
 
         .main-btn {
             width: 100%; padding: 16px; border-radius: 14px; border: none;
@@ -150,39 +111,21 @@
         }
         .number-big { font-size: 70px; font-weight: 900; color: var(--gold); line-height: 1; margin-top: 10px; }
 
-        .done-btn {
-            margin-top: 20px; width: 100%; padding: 18px; border-radius: 16px; border: none;
-            background: linear-gradient(135deg, #2ed573, #1db954);
-            color: #fff; font-size: 20px; font-weight: 900;
-            cursor: pointer; display: none; justify-content: center; align-items: center; gap: 12px;
-            font-family: 'Cairo', sans-serif; transition: all 0.3s ease;
-            box-shadow: 0 8px 30px rgba(46,213,115,0.45);
-        }
-        .done-btn:active { transform: scale(0.97); }
-
+        /* شاشة النهاية */
         #finishScreen { display: none; text-align: center; padding: 15px 0; }
         .finish-emoji { font-size: 90px; margin-bottom: 15px; animation: bounceIn 0.8s ease; display: block; }
         .finish-title { font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 12px; }
-        .finish-sub { font-size: 15px; color: var(--text-muted); line-height: 2; }
+        .finish-sub { font-size: 15px; color: var(--text-muted); line-height: 2; margin-bottom: 24px; }
 
-        .overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.85); z-index: 999;
-            justify-content: center; align-items: flex-end; padding: 20px;
+        /* زر تخطي / إغلاق */
+        .skip-btn {
+            width: 100%; padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: #cbd5e0;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            font-family: 'Cairo', sans-serif; transition: all 0.3s;
         }
-        .overlay.show { display: flex; }
-        .popup {
-            background: #1e2230; border-radius: 28px 28px 20px 20px; padding: 30px;
-            width: 100%; max-width: 440px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.08); animation: slideUp 0.4s ease;
-        }
-        .popup .q-emoji { font-size: 70px; display: block; margin-bottom: 15px; }
-        .popup h3 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
-        .popup p { font-size: 14px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.7; }
-        .popup-btns { display: flex; gap: 12px; }
-        .popup-btns button { flex: 1; padding: 16px; border-radius: 14px; border: none; font-size: 18px; font-weight: 800; cursor: pointer; font-family: 'Cairo', sans-serif; }
-        .btn-yes { background: linear-gradient(135deg, #2ed573, #1db954); color: #fff; }
-        .btn-no { background: rgba(255,255,255,0.07); color: #fff; }
+        .skip-btn:hover, .skip-btn:active { background: rgba(255,255,255,0.1); color: #fff; }
 
         @keyframes pulse { 0%,100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -200,12 +143,10 @@
 
     <div class="container">
 
-        <!-- صورة الغلاف كاملة بدون قص -->
         <div class="cover-image animated">
             <img src="cover.jpg" alt="غلاف الصالون">
         </div>
 
-        <!-- بطاقة معلومات الصالون -->
         <div class="salon-info animated">
             <div class="info-row">
                 <i class="fas fa-map-marker-alt"></i>
@@ -220,7 +161,6 @@
             </div>
         </div>
 
-        <!-- شريط حالة الصالون -->
         <div class="status-bar" id="salonStatusBar" style="display:none;">
             <div class="s-dot"></div>
             <span id="salonStatusText"></span>
@@ -250,7 +190,7 @@
             </button>
         </div>
 
-        <!-- شاشة الانتظار -->
+        <!-- شاشة الانتظار — بدون زر "انتهيت" -->
         <div class="card animated" id="queueDisplay">
             <h3>مرحباً، <span id="displayName" style="color: var(--gold);"></span></h3>
             <div class="status-pill">
@@ -262,28 +202,16 @@
                 <div class="number-big" id="queueNumber">--</div>
             </div>
             <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.8;"></p>
-            <button class="done-btn" id="doneBtn" onclick="showConfirm()">
-                <span style="font-size:24px;">✅</span> انتهيت من الحلاقة
-            </button>
         </div>
 
-        <!-- شاشة النهاية -->
+        <!-- شاشة النهاية — مع زر تخطي فقط -->
         <div class="card animated" id="finishScreen">
             <span class="finish-emoji">💈</span>
             <div class="finish-title">نعيماً يا عيوني! 🎉</div>
             <div class="finish-sub">شكراً لزيارتك صالون محمد عدنان<br>نتشرف بخدمتك دائماً ✂️</div>
-        </div>
-    </div>
-
-    <div class="overlay" id="confirmOverlay">
-        <div class="popup">
-            <span class="q-emoji">✂️</span>
-            <h3>انتهيت من الحلاقة؟</h3>
-            <p>اضغط نعم إذا خلصت<br>وراح نحذف دورك من القائمة</p>
-            <div class="popup-btns">
-                <button class="btn-yes" onclick="confirmDone()">✅ نعم، خلصت</button>
-                <button class="btn-no" onclick="closeConfirm()">❌ لا، بعد</button>
-            </div>
+            <button class="skip-btn" onclick="skipFinish()">
+                <i class="fas fa-times"></i> إغلاق
+            </button>
         </div>
     </div>
 
@@ -315,11 +243,10 @@
         async function fetchSalonStatus() {
             const { data, error } = await db.from('salon_status').select('is_open').eq('id', 1).single();
             if (error || !data) return;
-            const isOpen = data.is_open;
-            renderSalonStatus(isOpen);
+            renderSalonStatus(data.is_open);
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
-            if (isOpen) {
+            if (data.is_open) {
                 document.getElementById('closedScreen').style.display = 'none';
                 document.getElementById('bookingForm').style.display = 'block';
             } else {
@@ -334,8 +261,7 @@
             const savedName     = localStorage.getItem('salon_myName');
             const savedNotified = localStorage.getItem('salon_notified') === 'true';
             if (savedId && savedName) {
-                const { data, error } = await db
-                    .from('appointments').select('*').eq('id', savedId).single();
+                const { data, error } = await db.from('appointments').select('*').eq('id', savedId).single();
                 if (!error && data && data.status !== 'completed') {
                     myId   = parseInt(savedId);
                     myName = savedName;
@@ -345,7 +271,7 @@
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = myName;
                     updateUI();
-                    updateInterval = setInterval(updateUI, 4000);
+                    updateInterval = setInterval(updateUI, 3000);
                 } else {
                     clearStorage();
                 }
@@ -365,72 +291,63 @@
             localStorage.removeItem('salon_notified');
         }
 
+        /* زر إغلاق شاشة النهاية — يرجع لصفحة الحجز */
+        function skipFinish() {
+            clearStorage();
+            myId = null;
+            document.getElementById('finishScreen').style.display = 'none';
+            fetchSalonStatus();
+        }
+
         function playTurnSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const melody = [
-                    { freq: 440,  start: 0.0,  dur: 0.35, type: 'sine',     vol: 0.45 },
-                    { freq: 554,  start: 0.3,  dur: 0.35, type: 'sine',     vol: 0.45 },
-                    { freq: 659,  start: 0.6,  dur: 0.5,  type: 'sine',     vol: 0.5  },
-                    { freq: 880,  start: 0.9,  dur: 0.7,  type: 'triangle', vol: 0.35 },
-                ];
-                melody.forEach(({ freq, start, dur, type, vol }) => {
-                    const osc  = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    const delay = ctx.createDelay(0.2);
-                    const fb    = ctx.createGain();
-                    delay.delayTime.value = 0.18;
-                    fb.gain.value = 0.25;
-                    delay.connect(fb);
-                    fb.connect(delay);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    gain.connect(delay);
-                    delay.connect(ctx.destination);
-                    osc.type = type;
-                    osc.frequency.value = freq;
+                [
+                    { freq: 440, start: 0.0, dur: 0.35, type: 'sine',     vol: 0.45 },
+                    { freq: 554, start: 0.3, dur: 0.35, type: 'sine',     vol: 0.45 },
+                    { freq: 659, start: 0.6, dur: 0.5,  type: 'sine',     vol: 0.5  },
+                    { freq: 880, start: 0.9, dur: 0.7,  type: 'triangle', vol: 0.35 },
+                ].forEach(({ freq, start, dur, type, vol }) => {
+                    const osc = ctx.createOscillator(), gain = ctx.createGain();
+                    const delay = ctx.createDelay(0.2), fb = ctx.createGain();
+                    delay.delayTime.value = 0.18; fb.gain.value = 0.25;
+                    delay.connect(fb); fb.connect(delay);
+                    osc.connect(gain); gain.connect(ctx.destination); gain.connect(delay); delay.connect(ctx.destination);
+                    osc.type = type; osc.frequency.value = freq;
                     const s = ctx.currentTime + start;
                     gain.gain.setValueAtTime(0, s);
                     gain.gain.linearRampToValueAtTime(vol, s + 0.04);
                     gain.gain.exponentialRampToValueAtTime(0.001, s + dur);
-                    osc.start(s);
-                    osc.stop(s + dur + 0.25);
+                    osc.start(s); osc.stop(s + dur + 0.25);
                 });
-                const drumOsc  = ctx.createOscillator();
-                const drumGain = ctx.createGain();
-                drumOsc.connect(drumGain);
-                drumGain.connect(ctx.destination);
-                drumOsc.type = 'sine';
-                drumOsc.frequency.setValueAtTime(180, ctx.currentTime);
-                drumOsc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
-                drumGain.gain.setValueAtTime(0.6, ctx.currentTime);
-                drumGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-                drumOsc.start(ctx.currentTime);
-                drumOsc.stop(ctx.currentTime + 0.2);
-            } catch(e) { console.warn('Sound error:', e); }
+                const d = ctx.createOscillator(), dg = ctx.createGain();
+                d.connect(dg); dg.connect(ctx.destination);
+                d.type = 'sine';
+                d.frequency.setValueAtTime(180, ctx.currentTime);
+                d.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+                dg.gain.setValueAtTime(0.6, ctx.currentTime);
+                dg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                d.start(ctx.currentTime); d.stop(ctx.currentTime + 0.2);
+            } catch(e) {}
         }
 
         async function book() {
-            const nameInput  = document.getElementById('name');
+            const nameInput = document.getElementById('name');
             const phoneInput = document.getElementById('phone');
-            const submitBtn  = document.getElementById('submitBtn');
+            const submitBtn = document.getElementById('submitBtn');
             const name  = nameInput.value.trim();
             const phone = phoneInput.value.trim().replace(/\s/g, '');
 
             if (!name) {
                 nameInput.style.borderColor = '#ff4d4d';
                 nameInput.placeholder = 'يرجى كتابة اسمك أولاً!';
-                nameInput.focus();
-                return;
+                nameInput.focus(); return;
             }
-
-            /* التحقق: 11 رقم بالضبط */
             if (!/^\d{11}$/.test(phone)) {
                 phoneInput.style.borderColor = '#ff4d4d';
                 phoneInput.value = '';
                 phoneInput.placeholder = 'الرقم يجب أن يكون 11 رقم بالضبط!';
-                phoneInput.focus();
-                return;
+                phoneInput.focus(); return;
             }
 
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحجز...';
@@ -441,19 +358,16 @@
                     .from('appointments')
                     .insert([{ customer_name: name, phone: phone, status: 'pending' }])
                     .select();
-
                 if (error) throw error;
-
                 if (data && data.length > 0) {
-                    myId   = data[0].id;
-                    myName = name;
+                    myId = data[0].id; myName = name;
                     saveToStorage();
                     document.getElementById('bookingForm').style.display = 'none';
                     document.getElementById('closedScreen').style.display = 'none';
                     document.getElementById('queueDisplay').style.display = 'block';
                     document.getElementById('displayName').innerText = name;
                     updateUI();
-                    updateInterval = setInterval(updateUI, 4000);
+                    updateInterval = setInterval(updateUI, 3000);
                 }
             } catch (err) {
                 alert('حدث خطأ: ' + err.message);
@@ -465,11 +379,23 @@
         async function updateUI() {
             if (!myId) return;
             try {
-                const { data: appt, error } = await db
-                    .from('appointments').select('*').eq('id', myId).single();
+                const { data: appt, error } = await db.from('appointments').select('*').eq('id', myId).single();
                 if (error) return;
+
+                /* ✅ الإدارة أنهت الخدمة — ينتقل تلقائياً لشاشة نعيماً */
+                if (appt.status === 'completed') {
+                    clearInterval(updateInterval);
+                    clearStorage();
+                    myId = null;
+                    document.getElementById('queueDisplay').style.display = 'none';
+                    document.getElementById('finishScreen').style.display = 'block';
+                    return;
+                }
+
                 if (appt.status === 'approved') {
                     clearInterval(updateInterval);
+                    // نكمل البولينج بشكل أبطأ لمعرفة متى يصير completed
+                    updateInterval = setInterval(updateUI, 3000);
                     if (!alreadyNotified) {
                         alreadyNotified = true;
                         localStorage.setItem('salon_notified', 'true');
@@ -483,7 +409,7 @@
                     document.getElementById('queueNumber').innerText = '✂️';
                     document.getElementById('queueNumber').style.color = '#2ed573';
                     document.getElementById('msg').innerHTML = 'تفضل للكرسي الآن 💈<br>نعيماً مقدماً!';
-                    document.getElementById('doneBtn').style.display = 'flex';
+
                 } else if (appt.status === 'pending') {
                     const { count } = await db
                         .from('appointments')
@@ -496,22 +422,6 @@
                         : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
                 }
             } catch(e) {}
-        }
-
-        function showConfirm()  { document.getElementById('confirmOverlay').classList.add('show'); }
-        function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('show'); }
-
-        async function confirmDone() {
-            closeConfirm();
-            try {
-                await db.from('appointments').update({ status: 'completed' }).eq('id', myId);
-                clearStorage();
-                myId = null;
-                document.getElementById('queueDisplay').style.display = 'none';
-                document.getElementById('finishScreen').style.display = 'block';
-            } catch(e) {
-                alert('حدث خطأ: ' + e.message);
-            }
         }
     </script>
 </body>
