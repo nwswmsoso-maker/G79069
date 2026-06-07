@@ -170,14 +170,12 @@
             <span id="salonStatusText"></span>
         </div>
 
-        <!-- شاشة المغلق -->
         <div class="card animated" id="closedScreen">
             <span class="closed-emoji">🔒</span>
             <div class="closed-title">الصالون مغلق حالياً</div>
             <div class="closed-sub">نأسف، الصالون غير متاح الآن<br>يرجى المحاولة لاحقاً ✂️</div>
         </div>
 
-        <!-- فورم الحجز -->
         <div class="card animated" id="bookingForm" style="display:none;">
             <h3>احجز حلاقة لنفسك فقط</h3>
             <div class="input-group">
@@ -194,7 +192,6 @@
             </button>
         </div>
 
-        <!-- شاشة الانتظار — بدون زر "انتهيت" -->
         <div class="card animated" id="queueDisplay">
             <h3>مرحباً، <span id="displayName" style="color: var(--gold);"></span></h3>
             <div class="status-pill">
@@ -208,7 +205,6 @@
             <p id="msg" style="color: var(--text-muted); font-size: 14px; line-height: 1.8;"></p>
         </div>
 
-        <!-- شاشة النهاية — مع زر تخطي فقط -->
         <div class="card animated" id="finishScreen">
             <span class="finish-emoji">💈</span>
             <div class="finish-title">نعيماً يا عيوني! 🎉</div>
@@ -251,7 +247,6 @@
             const wasOpen = salonIsOpen;
             renderSalonStatus(data.is_open);
 
-            // تعديل سرعة الفحص حسب حالة الصالون
             if (wasOpen !== data.is_open) {
                 clearInterval(statusInterval);
                 statusInterval = setInterval(fetchSalonStatus, data.is_open ? 5000 : 30000);
@@ -304,7 +299,6 @@
             localStorage.removeItem('salon_notified');
         }
 
-        /* زر إغلاق شاشة النهاية — يرجع لصفحة الحجز نظيفة */
         function skipFinish() {
             clearStorage();
             myId = null;
@@ -407,8 +401,13 @@
         async function updateUI() {
             if (!myId) return;
             try {
-                const { data: appt, error } = await db.from('appointments').select('*').eq('id', myId).single();
-                if (error) return;
+                // 1. جلب بيانات حجز الزبون الحالي
+                const { data: appt, error: fetchError } = await db.from('appointments').select('*').eq('id', myId).single();
+                
+                if (fetchError) {
+                    console.error("حدث خطأ في جلب حالة الحجز:", fetchError);
+                    return; // راح يرجع يحاول تلقائياً بالدورة القادمة
+                }
 
                 /* ✅ الإدارة أنهت الخدمة — ينتقل تلقائياً لشاشة نعيماً */
                 if (appt.status === 'completed') {
@@ -440,17 +439,29 @@
                         '</div>';
 
                 } else if (appt.status === 'pending') {
-                    const { count } = await db
+                    // 2. جلب عدد المنتظرين مع معالجة الأخطاء والشبكة الضعيفة
+                    const { count, error: countError } = await db
                         .from('appointments')
                         .select('*', { count: 'exact', head: true })
                         .in('status', ['pending', 'approved'])
                         .lt('id', myId);
+
+                    if (countError) {
+                        console.error("حدث خطأ في حساب الطابور:", countError);
+                        // إظهار علامة تحميل مؤقتة للزبون بدل الـ -- الصامتة
+                        document.getElementById('queueNumber').innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 40px; color: #a0aec0;"></i>';
+                        return; 
+                    }
+
+                    // تحديث الرقم بنجاح
                     document.getElementById('queueNumber').innerText = count ?? 0;
                     document.getElementById('msg').innerText = count === 0
                         ? 'أنت التالي مباشرة! استعد 💈'
                         : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error("خطأ غير متوقع في النظام:", e);
+            }
         }
     </script>
 </body>
