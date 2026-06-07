@@ -111,13 +111,11 @@
         }
         .number-big { font-size: 70px; font-weight: 900; color: var(--gold); line-height: 1; margin-top: 10px; }
 
-        /* شاشة النهاية */
         #finishScreen { display: none; text-align: center; padding: 15px 0; }
         .finish-emoji { font-size: 90px; margin-bottom: 15px; animation: bounceIn 0.8s ease; display: block; }
         .finish-title { font-size: 28px; font-weight: 900; color: var(--gold); margin-bottom: 12px; }
         .finish-sub { font-size: 15px; color: var(--text-muted); line-height: 2; margin-bottom: 24px; }
 
-        /* زر تخطي / إغلاق */
         .skip-btn {
             width: 100%; padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05); color: #cbd5e0;
@@ -130,7 +128,6 @@
         @keyframes pulse { 0%,100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .animated { animation: fadeIn 0.6s ease; }
     </style>
 </head>
@@ -194,11 +191,11 @@
 
         <div class="card animated" id="queueDisplay">
             <h3>مرحباً، <span id="displayName" style="color: var(--gold);"></span></h3>
-            <div class="status-pill">
+            <div class="status-pill" id="statusPill">
                 <div class="pulse-dot"></div>
                 <span id="statusText">أنت في قائمة الانتظار</span>
             </div>
-            <div class="counter-box">
+            <div class="counter-box" id="counterBox">
                 <span style="color: var(--text-muted); font-size: 14px;">عدد المنتظرين أمامك</span>
                 <div class="number-big" id="queueNumber">--</div>
             </div>
@@ -310,13 +307,19 @@
                 document.getElementById(id).style.display = 'none';
             });
 
-            const nameEl = document.getElementById('name');
+            // إعادة تهيئة عناصر الطابور
+            document.getElementById('statusPill').style.display = '';
+            document.getElementById('counterBox').style.display = '';
+            document.getElementById('statusText').innerText = 'أنت في قائمة الانتظار';
+            document.getElementById('msg').innerHTML = '';
+
+            const nameEl  = document.getElementById('name');
             const phoneEl = document.getElementById('phone');
-            const btn = document.getElementById('submitBtn');
-            nameEl.value = ''; nameEl.style.borderColor = ''; nameEl.placeholder = 'أدخل اسمك الكريم';
+            const btn     = document.getElementById('submitBtn');
+            nameEl.value  = ''; nameEl.style.borderColor  = ''; nameEl.placeholder  = 'أدخل اسمك الكريم';
             phoneEl.value = ''; phoneEl.style.borderColor = ''; phoneEl.placeholder = '07XX XXX XXXX';
             btn.innerHTML = '<i class="fas fa-check"></i> تأكيد الحجز';
-            btn.disabled = false;
+            btn.disabled  = false;
 
             fetchSalonStatus();
         }
@@ -354,9 +357,9 @@
         }
 
         async function book() {
-            const nameInput = document.getElementById('name');
+            const nameInput  = document.getElementById('name');
             const phoneInput = document.getElementById('phone');
-            const submitBtn = document.getElementById('submitBtn');
+            const submitBtn  = document.getElementById('submitBtn');
             const name  = nameInput.value.trim();
             const phone = phoneInput.value.trim().replace(/\s/g, '');
 
@@ -402,14 +405,15 @@
             if (!myId) return;
             try {
                 // 1. جلب بيانات حجز الزبون الحالي
-                const { data: appt, error: fetchError } = await db.from('appointments').select('*').eq('id', myId).single();
-                
+                const { data: appt, error: fetchError } = await db
+                    .from('appointments').select('*').eq('id', myId).single();
+
                 if (fetchError) {
-                    console.error("حدث خطأ في جلب حالة الحجز:", fetchError);
-                    return; // راح يرجع يحاول تلقائياً بالدورة القادمة
+                    console.error("خطأ في جلب حالة الحجز:", fetchError);
+                    return;
                 }
 
-                /* ✅ الإدارة أنهت الخدمة — ينتقل تلقائياً لشاشة نعيماً */
+                // ✅ الخدمة انتهت — شاشة نعيماً
                 if (appt.status === 'completed') {
                     clearInterval(updateInterval);
                     clearStorage();
@@ -419,48 +423,52 @@
                     return;
                 }
 
-                if (appt.status === 'approved') {
-                    clearInterval(updateInterval);
-                    updateInterval = setInterval(updateUI, 3000);
+                // 2. دائماً نجيب عدد المنتظرين قبل الزبون (pending أو approved)
+                const { count, error: countError } = await db
+                    .from('appointments')
+                    .select('*', { count: 'exact', head: true })
+                    .in('status', ['pending', 'approved'])
+                    .lt('id', myId);
+
+                if (countError) {
+                    console.error("خطأ في حساب الطابور:", countError);
+                    document.getElementById('queueNumber').innerHTML =
+                        '<i class="fas fa-spinner fa-spin" style="font-size:40px;color:#a0aec0;"></i>';
+                    return;
+                }
+
+                const ahead = count ?? 0;
+
+                // 3. عرض العداد دائماً
+                document.getElementById('statusPill').style.display = '';
+                document.getElementById('counterBox').style.display = '';
+                document.getElementById('queueNumber').innerText = ahead;
+
+                // 4. لو حان دوره (approved + صفر قدامه) — نبين رسالة "حان دورك"
+                if (appt.status === 'approved' && ahead === 0) {
                     if (!alreadyNotified) {
                         alreadyNotified = true;
                         localStorage.setItem('salon_notified', 'true');
                         playTurnSound();
                     }
-                    // إخفاء العداد وإظهار شاشة واضحة
-                    document.getElementById('statusText').innerText = '';
-                    document.querySelector('.status-pill').style.display = 'none';
-                    document.querySelector('.counter-box').style.display = 'none';
+                    document.getElementById('statusText').innerText = 'حان دورك الآن! ✂️';
                     document.getElementById('msg').innerHTML =
                         '<div style="margin-top:10px;">' +
-                        '<div style="font-size:80px;margin-bottom:10px;">✂️</div>' +
-                        '<div style="font-size:24px;font-weight:900;color:#2ed573;margin-bottom:8px;">حان دورك الآن!</div>' +
-                        '<div style="font-size:16px;color:#a0aec0;">تفضل للكرسي 💈<br>نعيماً مقدماً!</div>' +
+                        '<div style="font-size:60px;margin-bottom:8px;">✂️</div>' +
+                        '<div style="font-size:22px;font-weight:900;color:#2ed573;margin-bottom:6px;">تفضل للكرسي 💈</div>' +
+                        '<div style="font-size:15px;color:#a0aec0;">نعيماً مقدماً!</div>' +
                         '</div>';
 
-                } else if (appt.status === 'pending') {
-                    // 2. جلب عدد المنتظرين مع معالجة الأخطاء والشبكة الضعيفة
-                    const { count, error: countError } = await db
-                        .from('appointments')
-                        .select('*', { count: 'exact', head: true })
-                        .in('status', ['pending', 'approved'])
-                        .lt('id', myId);
-
-                    if (countError) {
-                        console.error("حدث خطأ في حساب الطابور:", countError);
-                        // إظهار علامة تحميل مؤقتة للزبون بدل الـ -- الصامتة
-                        document.getElementById('queueNumber').innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 40px; color: #a0aec0;"></i>';
-                        return; 
-                    }
-
-                    // تحديث الرقم بنجاح
-                    document.getElementById('queueNumber').innerText = count ?? 0;
-                    document.getElementById('msg').innerText = count === 0
+                } else {
+                    // 5. ما زال ينتظر — عرض عدد المنتظرين فقط
+                    document.getElementById('statusText').innerText = 'أنت في قائمة الانتظار';
+                    document.getElementById('msg').innerText = ahead === 0
                         ? 'أنت التالي مباشرة! استعد 💈'
                         : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
                 }
+
             } catch(e) {
-                console.error("خطأ غير متوقع في النظام:", e);
+                console.error("خطأ غير متوقع:", e);
             }
         }
     </script>
