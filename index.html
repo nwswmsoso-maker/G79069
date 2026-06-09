@@ -204,13 +204,6 @@
         let salonIsOpen     = null;
         let realtimeChannel = null;
 
-        function showScreen(id) {
-            ['closedScreen','bookingForm','queueDisplay','finishScreen'].forEach(s =>
-                document.getElementById(s).style.display = 'none'
-            );
-            if (id) document.getElementById(id).style.display = id === 'queueDisplay' ? 'block' : 'block';
-        }
-
         function renderSalonStatus(isOpen) {
             salonIsOpen = isOpen;
             const bar  = document.getElementById('salonStatusBar');
@@ -224,10 +217,9 @@
                 text.innerText = '🔴 الصالون مغلق حالياً';
             }
 
-            // لا تغير الشاشة إذا الزبون حجز أو انتهى
+            // لا تغير الشاشة إذا الزبون حجز بالفعل أو انتهى
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
-            if (document.getElementById('queueDisplay').style.display === 'block') return;
 
             if (isOpen) {
                 document.getElementById('closedScreen').style.display = 'none';
@@ -248,25 +240,25 @@
         function setupRealtime() {
             if (realtimeChannel) db.removeChannel(realtimeChannel);
 
-            realtimeChannel = db.channel('salon-customer-v2')
+            realtimeChannel = db.channel('salon-customer-v3')
                 .on('postgres_changes',
                     { event: '*', schema: 'public', table: 'salon_status' },
                     (payload) => {
-                        const isOpen = payload.new ? payload.new.is_open : null;
-                        if (isOpen !== null) renderSalonStatus(isOpen);
+                        if (payload.new && payload.new.is_open !== undefined)
+                            renderSalonStatus(payload.new.is_open);
                         else fetchSalonStatus();
                     }
                 )
                 .on('postgres_changes',
                     { event: 'UPDATE', schema: 'public', table: 'appointments' },
                     (payload) => {
-                        if (myId && payload.new && payload.new.id === myId) updateUI(payload.new);
+                        if (myId && payload.new && payload.new.id === myId)
+                            updateUI(payload.new);
                     }
                 )
                 .subscribe((status) => {
-                    if (status === 'CHANNEL_ERROR' || status === 'CLOSED') {
+                    if (status === 'CHANNEL_ERROR' || status === 'CLOSED')
                         setTimeout(setupRealtime, 4000);
-                    }
                 });
         }
 
