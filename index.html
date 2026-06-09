@@ -204,22 +204,31 @@
         let salonIsOpen     = null;
         let realtimeChannel = null;
 
-        // ── حالة الصالون ──
+        function showScreen(id) {
+            ['closedScreen','bookingForm','queueDisplay','finishScreen'].forEach(s =>
+                document.getElementById(s).style.display = 'none'
+            );
+            if (id) document.getElementById(id).style.display = id === 'queueDisplay' ? 'block' : 'block';
+        }
+
         function renderSalonStatus(isOpen) {
             salonIsOpen = isOpen;
             const bar  = document.getElementById('salonStatusBar');
             const text = document.getElementById('salonStatusText');
             bar.style.display = 'flex';
             if (isOpen) {
-                bar.className    = 'status-bar open';
-                text.innerText   = '🟢 الصالون مفتوح الآن';
+                bar.className  = 'status-bar open';
+                text.innerText = '🟢 الصالون مفتوح الآن';
             } else {
-                bar.className    = 'status-bar closed';
-                text.innerText   = '🔴 الصالون مغلق حالياً';
+                bar.className  = 'status-bar closed';
+                text.innerText = '🔴 الصالون مغلق حالياً';
             }
-            // فقط إذا الزبون ما حجز بعد
+
+            // لا تغير الشاشة إذا الزبون حجز أو انتهى
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
+            if (document.getElementById('queueDisplay').style.display === 'block') return;
+
             if (isOpen) {
                 document.getElementById('closedScreen').style.display = 'none';
                 document.getElementById('bookingForm').style.display  = 'block';
@@ -230,36 +239,37 @@
         }
 
         async function fetchSalonStatus() {
-            const { data, error } = await db.from('salon_status').select('is_open').eq('id', 1).single();
-            if (!error && data) renderSalonStatus(data.is_open);
+            try {
+                const { data, error } = await db.from('salon_status').select('is_open').eq('id', 1).single();
+                if (!error && data) renderSalonStatus(data.is_open);
+            } catch(e) {}
         }
 
-        // ── ✅ تحديث فوري — بدون أي polling ──
         function setupRealtime() {
             if (realtimeChannel) db.removeChannel(realtimeChannel);
 
-            realtimeChannel = db.channel('salon-customer')
-                // تغيير حالة الصالون فوري
+            realtimeChannel = db.channel('salon-customer-v2')
                 .on('postgres_changes',
-                    { event: 'UPDATE', schema: 'public', table: 'salon_status' },
-                    (payload) => renderSalonStatus(payload.new.is_open)
+                    { event: '*', schema: 'public', table: 'salon_status' },
+                    (payload) => {
+                        const isOpen = payload.new ? payload.new.is_open : null;
+                        if (isOpen !== null) renderSalonStatus(isOpen);
+                        else fetchSalonStatus();
+                    }
                 )
-                // تغيير حالة الحجز فوري
                 .on('postgres_changes',
                     { event: 'UPDATE', schema: 'public', table: 'appointments' },
                     (payload) => {
-                        if (myId && payload.new.id === myId) updateUI(payload.new);
+                        if (myId && payload.new && payload.new.id === myId) updateUI(payload.new);
                     }
                 )
                 .subscribe((status) => {
                     if (status === 'CHANNEL_ERROR' || status === 'CLOSED') {
-                        console.warn('إعادة الاتصال...');
                         setTimeout(setupRealtime, 4000);
                     }
                 });
         }
 
-        // ── تحميل الصفحة ──
         window.addEventListener('load', async () => {
             await fetchSalonStatus();
 
@@ -286,11 +296,10 @@
             setupRealtime();
         });
 
-        // ── Storage ──
         function saveToStorage() {
-            localStorage.setItem('salon_myId',       myId);
-            localStorage.setItem('salon_myName',     myName);
-            localStorage.setItem('salon_notified',   alreadyNotified);
+            localStorage.setItem('salon_myId',     myId);
+            localStorage.setItem('salon_myName',   myName);
+            localStorage.setItem('salon_notified', alreadyNotified);
         }
 
         function clearStorage() {
@@ -302,14 +311,11 @@
         function skipFinish() {
             clearStorage();
             myId = null; myName = null; alreadyNotified = false;
-            ['finishScreen','queueDisplay','closedScreen','bookingForm'].forEach(id =>
-                document.getElementById(id).style.display = 'none'
-            );
-            document.getElementById('statusPill').style.display   = '';
-            document.getElementById('counterBox').style.display   = '';
-            document.getElementById('statusText').innerText       = 'أنت في قائمة الانتظار';
-            document.getElementById('msg').innerHTML              = '';
-            document.getElementById('queueNumber').innerText      = '--';
+            document.getElementById('statusPill').style.display  = '';
+            document.getElementById('counterBox').style.display  = '';
+            document.getElementById('statusText').innerText      = 'أنت في قائمة الانتظار';
+            document.getElementById('msg').innerHTML             = '';
+            document.getElementById('queueNumber').innerText     = '--';
             const nameEl  = document.getElementById('name');
             const phoneEl = document.getElementById('phone');
             const btn     = document.getElementById('submitBtn');
@@ -320,7 +326,6 @@
             fetchSalonStatus();
         }
 
-        // ── صوت النغمة ──
         function playTurnSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -345,7 +350,6 @@
             } catch(e) {}
         }
 
-        // ── حجز ──
         async function book() {
             const nameInput  = document.getElementById('name');
             const phoneInput = document.getElementById('phone');
@@ -388,27 +392,23 @@
             }
         }
 
-        // ── تحديث واجهة الزبون ──
         async function updateUI(appt) {
             if (!myId) return;
 
-            // إذا البيانات ما جت من Realtime، اجلبها
             if (!appt || appt.id !== myId) {
                 const { data, error } = await db.from('appointments').select('*').eq('id', myId).single();
                 if (error || !data) return;
                 appt = data;
             }
 
-            // ✅ انتهت الخدمة
             if (appt.status === 'completed') {
                 clearStorage();
                 myId = null;
-                document.getElementById('queueDisplay').style.display  = 'none';
-                document.getElementById('finishScreen').style.display  = 'block';
+                document.getElementById('queueDisplay').style.display = 'none';
+                document.getElementById('finishScreen').style.display = 'block';
                 return;
             }
 
-            // ✅ حان دوره
             if (appt.status === 'approved') {
                 if (!alreadyNotified) {
                     alreadyNotified = true;
@@ -416,8 +416,8 @@
                     playTurnSound();
                     if (navigator.vibrate) navigator.vibrate([400, 100, 400, 100, 400]);
                 }
-                document.getElementById('statusPill').style.display  = 'none';
-                document.getElementById('counterBox').style.display  = 'none';
+                document.getElementById('statusPill').style.display = 'none';
+                document.getElementById('counterBox').style.display = 'none';
                 document.getElementById('msg').innerHTML =
                     '<div style="margin-top:10px;">' +
                     '<div style="font-size:70px;margin-bottom:10px;">✂️</div>' +
@@ -427,7 +427,6 @@
                 return;
             }
 
-            // ✅ لا يزال ينتظر — احسب عدد من أمامه
             if (appt.status === 'pending') {
                 const { count, error: countError } = await db
                     .from('appointments')
@@ -437,11 +436,11 @@
 
                 if (countError) return;
                 const ahead = count ?? 0;
-                document.getElementById('statusPill').style.display  = '';
-                document.getElementById('counterBox').style.display  = '';
-                document.getElementById('statusText').innerText      = 'أنت في قائمة الانتظار';
-                document.getElementById('queueNumber').innerText     = ahead;
-                document.getElementById('msg').innerText             = ahead === 0
+                document.getElementById('statusPill').style.display = '';
+                document.getElementById('counterBox').style.display = '';
+                document.getElementById('statusText').innerText     = 'أنت في قائمة الانتظار';
+                document.getElementById('queueNumber').innerText    = ahead;
+                document.getElementById('msg').innerText            = ahead === 0
                     ? 'أنت التالي مباشرة! استعد 💈'
                     : 'سنحدث الشاشة تلقائياً عند اقتراب دورك.';
             }
