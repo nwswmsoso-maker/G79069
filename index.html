@@ -217,7 +217,6 @@
                 text.innerText = '🔴 الصالون مغلق حالياً';
             }
 
-            // لا تغير الشاشة إذا الزبون حجز بالفعل أو انتهى
             if (myId) return;
             if (document.getElementById('finishScreen').style.display === 'block') return;
 
@@ -239,7 +238,6 @@
 
         function setupRealtime() {
             if (realtimeChannel) db.removeChannel(realtimeChannel);
-
             realtimeChannel = db.channel('salon-customer-v3')
                 .on('postgres_changes',
                     { event: '*', schema: 'public', table: 'salon_status' },
@@ -303,11 +301,17 @@
         function skipFinish() {
             clearStorage();
             myId = null; myName = null; alreadyNotified = false;
-            document.getElementById('statusPill').style.display  = '';
-            document.getElementById('counterBox').style.display  = '';
-            document.getElementById('statusText').innerText      = 'أنت في قائمة الانتظار';
-            document.getElementById('msg').innerHTML             = '';
-            document.getElementById('queueNumber').innerText     = '--';
+
+            // إخفاء كل الشاشات
+            document.getElementById('finishScreen').style.display  = 'none';
+            document.getElementById('queueDisplay').style.display  = 'none';
+            document.getElementById('statusPill').style.display    = '';
+            document.getElementById('counterBox').style.display    = '';
+            document.getElementById('statusText').innerText        = 'أنت في قائمة الانتظار';
+            document.getElementById('msg').innerHTML               = '';
+            document.getElementById('queueNumber').innerText       = '--';
+
+            // تنظيف الفورم
             const nameEl  = document.getElementById('name');
             const phoneEl = document.getElementById('phone');
             const btn     = document.getElementById('submitBtn');
@@ -315,7 +319,15 @@
             phoneEl.value = ''; phoneEl.style.borderColor = ''; phoneEl.placeholder = '07XX XXX XXXX';
             btn.innerHTML = '<i class="fas fa-check"></i> تأكيد الحجز';
             btn.disabled  = false;
-            fetchSalonStatus();
+
+            // إظهار الشاشة الصح بناءً على حالة الصالون
+            if (salonIsOpen) {
+                document.getElementById('bookingForm').style.display  = 'block';
+                document.getElementById('closedScreen').style.display = 'none';
+            } else {
+                document.getElementById('closedScreen').style.display = 'block';
+                document.getElementById('bookingForm').style.display  = 'none';
+            }
         }
 
         function playTurnSound() {
